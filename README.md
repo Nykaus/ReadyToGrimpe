@@ -12,3 +12,13 @@ Il permet de gérer des topos de site d'escalade
 
 
 ![Image d'un secteur](http://www.readytogrimpe.climbing-crew.fr/bddimg/sc/W.66.jpg)
+
+
+Ce projet utilise :
+- jquery : javascript
+- showdown : markdown en javascript  ( http://www.attacklab.net/ )
+- betacreator : editeur de topo en javascript ( https://github.com/nemophrost/betacreator )
+- phpqrcode : générateur de QR Code ( https://github.com/t0k4rt/phpqrcode )
+- simplesamlphp : gestion de l'authentification ( https://simplesamlphp.org/ )
+- mmenu : interface look application mobile basé sur jquery ( http://mmenu.frebsite.nl/ )
+- bootstrap : css
