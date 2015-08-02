@@ -1,0 +1,1599 @@
+﻿<?xml version="1.0" ?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="xml" indent="yes" />
+
+<xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
+<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+
+
+<xsl:template match="RTG">
+<html>
+<head>
+	<title>ReadyToGrimpe - print version</title>
+	<base href="{BaseUrl/text()}" />
+       <link type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+	<script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript">&#160;</script>
+	<script src="http://code.jquery.com/jquery-1.10.2.js">&#160;</script>
+	<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js">&#160;</script>
+	<script type="text/javascript" src="js/bin/showdown.js">&#160;</script>	
+	<script type="text/javascript" src="js/RTG/rtg_datas_init.php">&#160;</script>
+	<script type="text/javascript" src="js/RTG/rtg_print.js">&#160;</script>
+	<script type="text/javascript" src="js/RTG/rtg_rpc.js">&#160;</script>
+	<script type="text/javascript">
+	var rtg_markdownrender = new Showdown.converter();
+        </script>	
+	<style type="text/css">
+	body { font-family: Verdana; color:#666; font-size: 0.7em;}
+
+	.couverture {text-align: right; padding:25% 0.5cm 25% 0.5cm;}
+	.couverture4 {text-align: right;}
+	.couverture .logo {text-align: center; margin-top: 3cm;}
+	.couverture .logo img {width:98%;}
+	.titre {
+		font-size: 5em; 
+		font-weight: bold;  
+		font-familly:Fantasy;
+		letter-spacing: -.32cm;
+		/*text-shadow: 3px 3px 1px #AA1111,-3px 3px 1px #AA1111,3px -3px 1px #AA1111,-3px -3px 1px #AA1111;*/
+		color: rgb(22, 142, 247);
+		/*color:#FFFFFF; 
+                 text-shadow: 3px 3px 1px   rgb(22, 142, 247),-3px 3px 1px   rgb(22, 142, 247),3px -3px 1px   rgb(22, 142, 247),-3px -3px 1px   rgb(22, 142, 247);*/
+                  
+		}
+	.soustitre {font-size: 2.5em; color:#AA1111; font-style: italic;}
+	.newPage {page-break-before: always;}
+	.newRightPage {page-break-before: right;}
+	.newLeftPage {page-break-before: left;}
+
+	.legende { padding:0;}
+	.legende .body {padding:0.3cm; margin:0;}
+	.legende .item {display: inline-table; width:5cm; text-align: left; margin:0; padding: 0.1cm;}
+	.legende .item img {height: .8cm; display:initial; vertical-align: top; margin:0 .1cm 0 0;}
+
+	.topoimg { text-align: center;}
+	.topoimg img { max-height:15cm; max-width: 100%; }
+        .imgXL  img { max-height:24cm; max-width: 100%; margin:0; }
+        .imgXM  img { max-height:18cm; max-width: 100%; }
+        .imgL  img { max-height:15cm; max-width: 100% !important; }
+        .imgM  img { max-height:9cm; max-width: 100% !important; }
+        	
+	.general td {text-align: center;}
+
+	H1.SI {    
+
+		color:rgb(22, 142, 247);
+		font-variant: small-caps;
+		/*color:#FEFEFE; 
+		text-shadow: 3px 3px 1px   rgb(22, 142, 247),-3px 3px 1px   rgb(22, 142, 247),3px -3px 1px   rgb(22, 142, 247),-3px -3px 1px   rgb(22, 142, 247);*/
+		font-size: 3.2em; 
+		font-weight: bold; 
+		font-familly:Fantasy;
+		letter-spacing: -.12cm;
+ 	        width: 18cm;
+	  	clear: both;	
+		}
+	H2.SC, H2.PI, H2.GRP { color: rgba(22, 142, 247,.8);  /*#168EF7; */
+	     width: 18cm;
+	     font-size: 2.3em; 
+  	     clear: both;     
+	   }
+	H3.PI { color:  rgba(22, 142, 247,.5);  /*#11AA11; */
+	     witdh: 18cm;
+	     font-size: 2em; 
+             clear: both;	     
+	   }
+	.URL {color:rgba(22, 142, 247,.5);  /*#11AA11; */
+                 font-size: 1.2em; }
+
+	.comp H1 { color:#111; font-size:50%; }
+	.comp H2 { color:#111; font-size:50%; }
+	.comp H3 { color:#111; font-size:50%; }
+	.comp div { border:0; margin:0; }
+	.comp img {max-width:100%;}
+
+	.bg0 {background-color:#000000 !important; color:#ffffff;}
+	.bg1 {background-color:#FF0000 !important; color:#ffffff;}
+	.bg2 {background-color:#F88017 !important; color:#ffffff;}
+	.bg3 {background-color:#168EF7 !important; color:#ffffff;}
+	.bg4 {background-color:#00BB00 !important; color:#ffffff;}
+	.bg5 {background-color:#00DD00 !important; color:#ffffff;}
+
+	.cot {border-radius: 10px; line-height: .5cm; padding: 2px; width: 35px; text-align: center; color:#EEE; display:inline-block; font-weight: bold;}
+	.c1 {background-color:#00DD00 !important;}
+	.c2 {background-color:#00DD00 !important;}
+	.c3 {background-color:#00DD00 !important;}
+	.c4 {background-color:#00BB00 !important;}
+	.c5 {background-color:#168EF7 !important;}
+	.c6 {background-color:#F88017 !important;}
+	.c7 {background-color:#FF0000 !important;}
+	.c8 {background-color:#222222 !important;}
+	.c9 {background-color:#000000 !important;}
+	.cnew {background-color:#000000 !important;}
+	.cdef {background-color:#ADADAD !important;}
+
+	.barcot {width:14cm; border: 1px solid grey; padding:0; border-radius: 10px; margin: 0 auto 0 auto;}
+	.barcot tr {width:100%; border: 1px solid grey;}
+	.barcot td {text-align:center; color:white; margin:0;}
+	.barcot tr td:first-child { border-radius: 10px 0 0 10px !important;}
+	.barcot tr td:last-child { border-radius: 0 10px 10px 0 !important;}
+
+
+	.validway { background: lightyellow !important;
+		    border: 1px solid grey !important;
+		    border-radius: 4px !important; 
+		    width: 0.75cm !important;
+		    height: 0.75cm !important;
+		    margin:0 !important;
+		    position: relative !important;
+		    margin: 5px auto; !important
+		    display: inline-block;
+		    padding:0px !important;
+			font-size: 0.5cm;
+		    text-align:center;
+		    line-height: 0.8cm;}
+
+
+.comments { margin-top: 10px; margin-bottom: 10px;}
+.comment { margin-left: 20px;}	
+.comment .commentMeta,.comment .commentDatas {
+	display: inline-table; padding: 2px; margin: 2px; 
+	background-color:rgba(22, 142, 247,1);
+	color:rgba(255,255,255,0.7);
+	}
+.comment .commentMeta {text-align: center; border-radius:5px; margin-left:10px; vertical-align: top;}
+.comment .commentMeta:before {
+    font-family:'Glyphicons Halflings';
+    content:"\e008";
+}
+.comment a {
+    color: rgba(255,255,255,1);
+    font-weight: bold;
+}
+.comment .commentDatas {
+  position:relative;
+  padding:15px;
+  margin:1em 0 3em 0;
+  border:2px solid rgba(90, 143, 0,90);
+  color:rgba(255,255,255,0.7);
+  background:rgba(90, 143, 0,90);
+  /* css3 */
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
+  margin-left:10px;
+  max-width: 12cm;
+}
+
+.comment .commentDatas:before {
+  content:"";
+  position:absolute;
+  border-style:solid;
+  border-color:rgba(90, 143, 0,90) transparent;
+  display:block;
+  width:0;
+}
+
+/* creates the smaller  triangle */
+.comment .commentDatas:after {
+  content:"";
+  position:absolute;
+  border-style:solid;
+  border-color:rgba(90, 143, 0,90) transparent;
+  /* reduce the damage in FF3.0 */
+  display:block;
+  width:0;
+}
+/* creates the larger triangle */
+.comment .commentDatas:before {
+  top:14px; /* controls vertical position */
+  bottom:auto;
+  left:-20px; /* value = - border-left-width - border-right-width */
+  border-width:11px 20px 11px 0;
+  border-color:transparent rgba(90, 143, 0,90);
+}
+
+/* creates the smaller  triangle */
+.comment .commentDatas:after {
+  top:16px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+  bottom:auto;
+  left:-18px; /* value = - border-left-width - border-right-width */
+  border-width:9px 21px 9px 0;
+  border-color:transparent rgba(90, 143, 0,90);
+}
+
+.comment .commentText {text-align: justify;}
+
+.comment .commentPublic {text-align: right; border-bottom: 1px solid black;}
+
+
+	
+/*	.info {border-radius: 10px; padding: 2px; line-height: .6cm; min-width: 30px; text-align: center; color:#EEE; background-color:#ADADAD; display:inline-block;}
+        .info img {height: .6cm; display:initial; vertical-align: top; margin:0;}
+*/
+	.info {text-align: center; display:inline-block; line-height: .6cm;}
+        .info img {height: .5cm; display:initial; vertical-align: top; margin:0;}
+
+	th img {height: .6cm;}
+
+
+	td.tdescc {text-align: left !important; }
+	td.tname {text-align: left !important;  font-weight: bold; }
+
+
+	table.all {
+		width:100%;
+	}
+
+table.all tr.sc th { background: #dedede; }
+
+table.all th {
+	padding: 6px;
+	border-top:1px solid #fafafa;
+	border-bottom:1px solid #e0e0e0;
+	background: #ededed;
+}
+table.all th:first-child {
+	text-align: left;
+}
+table.all tr:first-child th:first-child {
+	border-top-left-radius:3px;
+}
+table.all tr:first-child th:last-child {
+	border-top-right-radius:3px;
+}
+table.all tr {
+	margin:0;
+	padding:0;
+	text-align: center;
+}
+table.all td:first-child {
+	text-align: left;
+	border-left: 0;
+}
+table.all td {
+	margin:0;
+	padding:2px;
+	text-align:center;
+	background: #fbfbfb;
+}
+table.all tr.r0 td {
+	background: #EEEEEE !important;
+}
+
+
+table.all tr.even td {
+	background: #f6f6f6;
+}
+table.all tr:last-child td {
+	border-bottom:0;
+}
+table.all tr:last-child td:first-child {
+	border-bottom-left-radius:3px;
+}
+table.all tr:last-child td:last-child {
+	border-bottom-right-radius:3px;
+}
+
+
+  .grpimg	{ display: inline-table;}
+  .grpimg.topoimg {max-width:8cm;}
+  .grpimg.topoimg img { max-width:8cm;}
+
+  <xsl:choose>
+        <xsl:when test="/RTG/MODE = 'Compact'">
+	.comp_photo img {max-height: 400px;}
+	.plan .outermap {
+		border:	0;
+		border-radius:	0;
+		padding: 0;
+                height: 8.5cm;
+	}
+	      .mapblockF { float:left;}
+        .mapblock  {height: 8cm; width:8.5cm;}
+        .mapblockgrp  {height: 11cm; width:18cm;}
+
+        .comp .label {background-color:#eee;}
+	.comp .label, 	.comp .value {display: inline-table; width:24%; text-align: center; padding:2px; border-top: 1px solid #555; height:20px;}
+	.comp .value3 {display: inline-table; width:73%; text-align: center; padding:0px;}
+	
+	.desc div, .comp  div,.legende div, .comments .body{
+		background:#FFF;
+		padding:3px 3px 6px 3px;
+	
+	}
+	.desc .head, .comp  .head, .legende .head, .plan .head, .comments .head{
+		background:#eaebec;
+		border:none;
+		text-align:right;
+		font-weight: bold;
+		color: #FAFAFA;
+		text-shadow: 0px 0px 8px #000000;
+		padding: 10px;
+	}
+	
+
+	
+	.all, .desc, .comp, .topoimg , .legende, .plan, .comments{
+		background:#fff;
+		border:#ccc 1px solid;
+		border-radius:3px;
+		page-break-inside: avoid;
+                margin-top:10px;
+	}
+	.desc, .comp , .topoimg, .legende, .map{
+		padding: 0;
+		margin-bottom: .1cm;
+	}
+	</xsl:when>
+	<xsl:otherwise>
+	.plan .outermap {
+		border:	0;
+		border-radius:	0;
+		padding: 0;
+                height: 12.5cm;
+	}
+	.mapblockF { float:left;}
+        .mapblock  {height: 12cm; width:9.5cm;}
+
+
+	.comp .label	{float:left; width:33%;}
+	.comp .label, 	.comp .value {text-align: center;}
+	
+	
+		.desc div, .comp  div,.legende div{
+		background:#fafafa;
+		border:#ccc 1px solid;
+		border-radius:3px;
+		padding: .5cm;
+	}
+	.desc .head, .comp  .head, .legende .head, .plan .head, .comments .head{
+		background:#eaebec;
+		border:none;
+		padding: .2cm;
+		text-align:right;
+		font-weight: bold;
+		color: #FAFAFA;
+		text-shadow: 0px 0px 8px #000000;
+	}
+	.all, .desc, .comp, .topoimg , .legende, .plan,  .comments{
+		background:#eaebec;
+		border:#ccc 1px solid;
+		border-radius:3px;
+		box-shadow: 0 1px 2px #d1d1d1;
+		page-break-inside: avoid;
+	}
+	.comments .body{
+		background:#FFF;
+		padding:3px 3px 6px 3px;
+	
+	}
+	.desc, .comp , .topoimg, .legende{
+		padding: .1cm .1cm .1cm .1cm;
+		margin-bottom: .5cm;
+	}
+	</xsl:otherwise>
+	</xsl:choose>
+	img.qrcode {
+ 		vertical-align: middle;
+ 		margin: 0cm .5cm 0cm 0;
+	}
+
+	@page :first {
+	  margin-top: 10cm    /* Top margin on first page 10cm */
+	}
+
+	@page :left {
+	  margin-left: 2cm;
+	  margin-right: 1cm;
+	}
+
+	@page :right {
+	  margin-left: 1cm;
+	  margin-right: 2cm;
+	}
+	@page{orphans:4; widows:2; margin: .5cm;}
+
+	.clear{clear: both;}
+	
+	
+
+	
+
+ 
+#searchDiv .item.item-private {
+	-moz-box-shadow:inset 0px 1px 0px 0px #f5978e;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #f5978e;
+	box-shadow:inset 0px 1px 0px 0px #f5978e;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f24537), color-stop(1, #c62d1f));
+	background:-moz-linear-gradient(top, #f24537 5%, #c62d1f 100%);
+	background:-webkit-linear-gradient(top, #f24537 5%, #c62d1f 100%);
+	background:-o-linear-gradient(top, #f24537 5%, #c62d1f 100%);
+	background:-ms-linear-gradient(top, #f24537 5%, #c62d1f 100%);
+	background:linear-gradient(to bottom, #f24537 5%, #c62d1f 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f24537', endColorstr='#c62d1f',GradientType=0);
+	background-color:#f24537;
+}
+
+ 
+#searchDiv .item.item-notopo {
+	-moz-box-shadow: 0px 1px 0px 0px #fff6af;
+	-webkit-box-shadow: 0px 1px 0px 0px #fff6af;
+	box-shadow: 0px 1px 0px 0px #fff6af;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffec64), color-stop(1, #ffab23));
+	background:-moz-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+	background:-webkit-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+	background:-o-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+	background:-ms-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+	background:linear-gradient(to bottom, #ffec64 5%, #ffab23 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffec64', endColorstr='#ffab23',GradientType=0);
+	background-color:#ffec64;
+}
+
+	
+	
+#searchDiv .item {
+	-moz-box-shadow:inset 0px 1px 0px 0px #97c4fe;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #97c4fe;
+	box-shadow:inset 0px 1px 0px 0px #97c4fe;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #3d94f6), color-stop(1, #1e62d0));
+	background:-moz-linear-gradient(top, #3d94f6 5%, #1e62d0 100%);
+	background:-webkit-linear-gradient(top, #3d94f6 5%, #1e62d0 100%);
+	background:-o-linear-gradient(top, #3d94f6 5%, #1e62d0 100%);
+	background:-ms-linear-gradient(top, #3d94f6 5%, #1e62d0 100%);
+	background:linear-gradient(to bottom, #3d94f6 5%, #1e62d0 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d94f6', endColorstr='#1e62d0',GradientType=0);
+	background-color:#3d94f6;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #1570cd;
+	margin: 5px;
+	width: 40%;
+	min-width:200px;
+	text-align: left;
+}
+
+#searchDiv .itemAction a{
+	-moz-box-shadow:inset 0px 1px 0px 0px #a4e271;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #a4e271;
+	box-shadow:inset 0px 1px 0px 0px #a4e271;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #89c403), color-stop(1, #77a809));
+	background:-moz-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:-webkit-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:-o-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:-ms-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:linear-gradient(to bottom, #89c403 5%, #77a809 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#89c403', endColorstr='#77a809',GradientType=0);
+	background-color:#89c403;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #74b807;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #528009;
+	margin: 5px auto 5px auto;
+}
+#searchDiv .itemAction:hover a{
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #77a809), color-stop(1, #89c403));
+	background:-moz-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:-webkit-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:-o-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:-ms-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:linear-gradient(to bottom, #77a809 5%, #89c403 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#77a809', endColorstr='#89c403',GradientType=0);
+	background-color:#77a809;
+}
+#searchDiv .itemAction:active a{
+	position:relative;
+	top:1px;
+}
+#searchDiv {text-align:center;}
+#searchDiv .itemAction {text-align:center;}
+
+#itemInfo {
+	position:absolute; 
+	right:50px;
+}
+
+
+#searchDiv
+{
+	-moz-box-shadow:inset 0px 1px 3px 0px #91b8b3;
+	-webkit-box-shadow:inset 0px 1px 3px 0px #91b8b3;
+	box-shadow:inset 0px 1px 3px 0px #91b8b3;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border:1px solid #566963;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:11px 23px;
+	text-decoration:none;
+	text-shadow:0px -1px 0px #2b665e;
+
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #6c7c7c), color-stop(1, #768d87));
+	background:-moz-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+	background:-webkit-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+	background:-o-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+	background:-ms-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
+	background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#6c7c7c', endColorstr='#768d87',GradientType=0);
+	background-color:#6c7c7c;
+
+
+}
+
+@media print
+{    
+    #searchDiv
+    {
+        display: none !important;
+    }
+}
+
+.gps {}
+.gps .value {color: green;}
+
+	
+	
+	
+	</style>
+</head>
+<body>
+<div class="body">
+	<div class="couverture">
+		<div class="titre">Ready To Grimpe</div>
+		<div class="soustitre">Topo d’escalade numérique</div>
+		<div class="logo">
+			<img src="http://www.climbing-crew.fr/wp-content/uploads/2014/07/Ready-to-grimpe-1000x320.jpg" />
+		</div>
+		<xsl:apply-templates select="." mode="qrcode" />
+		<div class="URL">http://www.readytogrimpe.climbing-crew.fr</div>
+		<xsl:if test="count(SI) = 1">
+			<H1 class="SI">&gt;&gt; <xsl:value-of select="SI[1]/name/text()"/></H1>
+		</xsl:if>
+
+		
+	</div>
+	<div class="topos">
+		<div class="sites">
+			<xsl:apply-templates select="SI"/>
+		</div>
+	</div>
+	<xsl:if test="/RTG/MODE != 'Compact'">
+		<xsl:if test="//PI[type='climbingcrew' or type='caf' or type='ffme']">
+		<div class="clubs newPage">
+			<!--<div class="titre">Clubs</div>-->
+			<xsl:apply-templates select="//PI" mode="full"/>
+		</div>
+		</xsl:if>
+	</xsl:if>	
+		<div class="couverture4 newPage">
+			<div class="titre">legende</div>
+			<br/>
+			<div class="legende clear">
+			  <div class="head">Carte</div>
+			  <div class="body">
+				  		<xsl:apply-templates select="PI/*" mode="legende"/>
+					        <div class="item"><img src="/img/legende/site.png" />Site</div>                
+						<div class="item"><img src="/img/legende/secteur.png" />Secteur</div>          
+			  </div>
+			</div>	
+
+			<div class="legende clear">	
+				<div class="head">Topo</div>
+				  <div class="body">
+							<div class="item"><img src="/img/legende/relais.png" />Relais</div>					
+							<div class="item"><img src="/img/legende/relaischaine.png" />Relais chainé</div>
+							<div class="item"><img src="/img/legende/voie.png" />voie</div>	
+				  </div>
+			</div>	        
+	       
+			<xsl:apply-templates select="type" mode="legende"/>
+			 <div class="legende clear">	
+				<div class="head">Noter vos voies</div>
+			  	<div class="body">
+				  		<div class="item" style="width:250px;"><div class="validway fa">&#160;</div>Annoter vous même</div>
+						<div class="item" style="width:250px;"><div class="validway fa fa-square-o">&#160;</div>Tentative</div>
+						<div class="item" style="width:250px;"><div class="validway fa fa-minus-square-o">&#160;</div>Tous les mouvements réussis</div>
+				  		<div class="item" style="width:250px;"><div class="validway fa fa-plus-square-o  ">&#160;</div>Faite aprés travail</div>
+				  		<div class="item" style="width:250px;"><div class="validway fa fa-check-square-o ">&#160;</div>Faite à vue</div>
+
+				  		
+				  		
+			  	</div>
+			 </div>
+			<div class="legende clear">
+				 <div class="head">Contact</div>
+				  <div class="body">
+			 Si vous remarquez des erreurs ou des risques sur le site ou l’équipement, merci de nous en faire part :
+			 <br/> <a href="mailto:contact@climbing-crew.fr">contact@climbing-crew.fr</a>
+				 </div>
+			</div>
+		</div>
+	
+</div>
+</body>
+</html>
+</xsl:template>
+ 
+ 
+<xsl:template match="PI/*" mode="legende">
+	<div class="item"><img src="/img/{icon/text()}" alt="{libelle/text()}" /> <xsl:value-of select="libelle/text()"/></div>
+</xsl:template>
+<xsl:template match="type" mode="legende">
+	<xsl:apply-templates select="*" mode="legende"/>
+</xsl:template>
+<xsl:template match="type/*" mode="legende">
+	<div class="legende clear" >
+		<div class="head"><xsl:value-of select="nom/text()"/></div>
+		<div class="body">
+			<xsl:apply-templates select="valeurs/valeurs" mode="legende"/>
+		</div>
+	</div>
+</xsl:template>
+<xsl:template match="type/prises" mode="legende" />
+<xsl:template match="type/escalade" mode="legende" />
+
+<xsl:template match="valeurs" mode="legende">
+	<xsl:variable name="id"><xsl:value-of select="translate(translate(normalize-space(text()), $uppercase,$smallcase),' ','')"/></xsl:variable>
+	<xsl:variable name="n"><xsl:value-of select="name(../..)"/></xsl:variable>
+	<div class="item"><img src="img/{$n}_{$id}.png" alt="{$n} {$id}"/> <xsl:value-of select="text()"/></div>
+</xsl:template>
+
+
+<xsl:template  match="SI" mode="barCot">
+	<xsl:param name="c" />
+	<xsl:param name="t" />
+	<xsl:variable name="nb"><xsl:value-of select="count(.//SC/SP/W[iCot=$c])"/></xsl:variable>
+	
+	<xsl:if test="$nb &gt; 0">
+		<xsl:variable name="pcent"><xsl:value-of select="$nb div $t * 100"/></xsl:variable>
+		<td width="{$pcent}%" class="c{$c}"><xsl:value-of select="$nb" /></td>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="SI">
+			<!-- statistiques du site -->
+			<xsl:variable name="nbvoie"  select="count(.//SP)" />
+			<xsl:variable name="nblongueur" select="count(.//W)" />
+
+        <xsl:choose>
+        <xsl:when test="/RTG/MODE = 'Compact'">
+		<div class="site">
+			<H1 class="{name()} newPage">
+				<xsl:apply-templates select="." mode="qrcode" />
+				<xsl:value-of select="name/text()"/>
+			</H1>
+			<xsl:choose>
+				<xsl:when test="descl/text()">
+					<xsl:apply-templates select="descl"/>
+				</xsl:when>
+				<xsl:when test="descc/text()">
+					<xsl:apply-templates select="descc"/>
+				</xsl:when>
+			</xsl:choose>
+			
+		
+			<xsl:call-template name="map" ><xsl:with-param name="filter">si-<xsl:value-of select="id"/></xsl:with-param></xsl:call-template>
+			<xsl:apply-templates select="PI[type/text() = 'p']" mode="compact"/>
+			
+			<div class="newPage">
+			<div class="comp">
+			<div class="head">Compléments d’informations</div>
+			<div class="label">Cotations des longueurs</div>
+					<div class="value3"> 
+						<table class="barcot" cellspading="0" cellspacing="0">
+							<tr>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">1</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">2</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">3</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">4</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">5</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">6</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">7</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">8</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>																					
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">9</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>																								
+							</tr>
+						</table>
+					</div>
+					<!--
+					<div class="label">Exposition</div>
+					<div class="value">
+						<table class="barcot" cellspading="0" cellspacing="0">
+							<tr>
+							<td class="c5" width="{count(//e[text() = 'N' or text() = 'NE' or text() = 'NO']) / count(//e)}%">Nord</td>
+							<td class="c1" width="{count(//e[text() = 'E' or text() = 'NE' or text() = 'SE']) / count(//e)}%">Est</td>
+							<td class="c6" width="{count(//e[text() = 'S' or text() = 'SE' or text() = 'SO']) / count(//e)}%">Sud</td>
+							<td class="c7" width="{count(//e[text() = 'O' or text() = 'SO' or text() = 'NO']) / count(//e)}%">Sud</td>
+							</tr>
+						</table>
+					</div>
+					-->
+					<div class="label">Nombre de départs de voies</div>
+					<div class="value"><xsl:value-of select="$nbvoie"/></div>
+					<div class="label">Nombre de longueurs</div>
+					<div class="value"><xsl:value-of select="$nblongueur"/></div>
+					<div class="label">Hauteur maximun</div>
+					<div class="value"><xsl:value-of select="hmax/text()"/>m</div>
+					<div class="label">Hauteur minimun</div>
+					<div class="value"><xsl:value-of select="hmin/text()"/>m</div>
+					
+					<xsl:variable name="l"><xsl:apply-templates select=".//comp/ouvreur" mode="ouvreur">
+					<xsl:with-param name="SIID"><xsl:value-of select="id"/></xsl:with-param>
+					</xsl:apply-templates></xsl:variable>
+					<xsl:choose>
+						<xsl:when test="comp/ouvreur">
+							<div class="label">Ouveur(s)</div>
+							<div class="value3">
+									<xsl:value-of select="comp/ouvreur" />			
+							</div>
+						</xsl:when> 
+						<xsl:when test="$l">
+							<div class="label">Ouveur(s)</div>
+							<div class="value3">
+									<xsl:value-of select="substring($l,2)" />			
+							</div>
+						</xsl:when> 
+					</xsl:choose>
+									
+					<xsl:apply-templates select="comp/*" />
+					<div class="clear" style="height:0;width:0;margin:0;padding:0;">&#160;</div>
+				</div>
+
+				
+			<xsl:apply-templates select="comp" mode="img"/>
+			</div>
+			
+			
+
+			<xsl:choose>
+				<xsl:when test="site_type = 'Bloc'"><xsl:apply-templates select="GRP" /></xsl:when>
+				<xsl:otherwise><xsl:apply-templates select=".//SC" /></xsl:otherwise>
+			</xsl:choose>
+		</div>
+		
+		
+		 
+	</xsl:when>
+	<xsl:otherwise>
+		<div class="site newPage">
+			<H1 class="{name()}">
+				<xsl:apply-templates select="." mode="qrcode" />
+				<xsl:value-of select="name/text()"/>
+			</H1>
+			<xsl:apply-templates select="comp" mode="img"/>
+			<xsl:choose>
+				<xsl:when test="descl/text()">
+					<xsl:apply-templates select="descl"/>
+				</xsl:when>
+				<xsl:when test="descc/text()">
+					<xsl:apply-templates select="descc"/>
+				</xsl:when>
+			</xsl:choose>
+		
+		
+			<div class="comp">
+			<div class="head">Compléments d’informations</div>
+					<div class="label">Nombre de depart de voies</div>
+					<div class="value"><xsl:value-of select="$nbvoie"/></div>
+					<div class="label">Nombre de longueurs</div>
+					<div class="value"><xsl:value-of select="$nblongueur"/></div>
+					<div class="label">Hauteur maximun</div>
+					<div class="value"><xsl:value-of select="hmax/text()"/>m</div>
+					<div class="label">Hauteur minimun</div>
+					<div class="value"><xsl:value-of select="hmin/text()"/>m</div>			
+					<div class="label">Cotations des longueurs</div>
+					<div class="value">
+						<table class="barcot" cellspading="0" cellspacing="0">
+							<tr>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">1</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">2</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">3</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">4</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">5</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">6</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">7</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">8</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>																					
+								<xsl:apply-templates select="." mode="barCot"><xsl:with-param name="c">9</xsl:with-param><xsl:with-param name="t"><xsl:value-of select="$nblongueur"/></xsl:with-param></xsl:apply-templates>																								
+							</tr>
+						</table>
+					</div>
+
+					<xsl:apply-templates select="comp/*" />
+			</div>
+			<xsl:variable name="l"><xsl:apply-templates select=".//comp/ouvreur" mode="ouvreur">
+				<xsl:with-param name="SIID"><xsl:value-of select="id"/></xsl:with-param>
+			</xsl:apply-templates></xsl:variable>
+					<xsl:choose>
+						<xsl:when test="comp/ouvreur">
+							<div class="label">Ouveur(s)</div>
+							<div class="value3">
+									<xsl:value-of select="comp/ouvreur" />			
+							</div>
+						</xsl:when> 
+						<xsl:when test="$l">
+							<div class="label">Ouveur(s)</div>
+							<div class="value3">
+									<xsl:value-of select="substring($l,2)" />			
+							</div>
+						</xsl:when> 
+					</xsl:choose>
+					<xsl:apply-templates select="COMMENTS" />
+
+		</div>
+		<xsl:call-template name="map"><xsl:with-param name="filter">si-<xsl:value-of select="id"/></xsl:with-param></xsl:call-template>
+		<xsl:apply-templates select="PI" />
+		<xsl:if test="PI/type/text() = 'caf' or PI/type/text() = 'ffme' or PI/type/text() = 'climbingcrew'">
+			<H2>Club(s) lié(s)</H2>
+			<ul>
+				<xsl:apply-templates select="PI" mode="club"/>
+			</ul>
+		</xsl:if>
+		<xsl:apply-templates select=".//SC" />
+	</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="comp/ouvreur" mode="ouvreur"><xsl:param name="SIID"/>
+	<xsl:variable name="text"><xsl:value-of select="text()"/></xsl:variable>
+	<xsl:variable name="firstId">
+	<xsl:value-of select="generate-id(/RTG/SI[id = $SIID]//comp/ouvreur[text() = $text and position()=1])" />
+	</xsl:variable><xsl:if test="generate-id(.) = $firstId">,<xsl:text> </xsl:text><xsl:value-of select="text()" /></xsl:if>
+</xsl:template>
+
+
+
+<xsl:template match="GRP">
+	<div class="newPage">
+		<H2 class="GRP"><xsl:value-of select="name/text()" /></H2>
+		
+	<xsl:variable name="id" select="generate-id(.)"/>
+	<div class="plan">
+		<div class="head">Plan</div>
+		<div class="mapblockgrp">
+			<div id="map-1-grp-{$id}" class="mapblockgrp">
+				CARTE 1
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		rtg_newMap('map-1-grp-<xsl:value-of select="$id"/>','<xsl:value-of select="SC[1]/lat"/>','<xsl:value-of select="SC[2]/lon"/>',17,google.maps.MapTypeId.HYBRID,'grp-<xsl:value-of select="name/text()"/>');
+	</script>
+		
+		<xsl:apply-templates select="SC" mode="GRPCOMP" />
+	</div>
+	<div class="newPage">
+		<xsl:apply-templates select="SC" mode="GRPIMG" />
+	</div>
+	<div class="newPage">
+
+						<table class="all" cellspacing="0" cellpadding="0">
+						<thead>
+							<tr>
+								<th>n°</th>
+								<th>Cotation</th>
+								<th>Nom</th>
+								<xsl:choose>
+									<xsl:when test="../site_type='Bloc' or ../../site_type = 'Bloc'">
+										<th><img src="img/td.png" /></th>
+										<th><img src="img/e.png" /></th>	
+									</xsl:when>
+									<xsl:otherwise>
+										<th><img src="img/h.png" /></th>
+										<th><img src="img/d.png" /></th>	
+									</xsl:otherwise>
+								</xsl:choose>
+								<th width="18%">Type</th>
+								<th width="15%">Faites</th>
+							</tr>
+						</thead>
+						<tbody>
+							<xsl:apply-templates select="SC" mode="GRPCOT" />
+						</tbody>
+						</table>
+	</div>
+</xsl:template>
+
+<xsl:template match="SC" mode="GRPCOMP">
+			<xsl:apply-templates select="comp" mode="img"/>
+</xsl:template>
+
+<xsl:template match="SC" mode="GRPIMG">
+		<div class="grpimg topoimg plan">
+		  <div class="head"><xsl:value-of select="name/text()"/></div>
+			<img src="bddimg/sc/F.{id/text()}.printh.jpg" />						
+			<xsl:apply-templates select="." mode="gps"/>
+	   </div>
+</xsl:template>
+
+<xsl:template match="SC" mode="GRPCOT">
+	<tr class="sc"><th colspan="7"> <xsl:value-of select="name/text()"/> </th></tr>
+			<xsl:apply-templates select="SP">
+					<xsl:with-param name="startnb">0</xsl:with-param>
+			</xsl:apply-templates>
+</xsl:template>
+
+
+<xsl:template match="SC">
+
+<xsl:variable name="brkSCTopo">
+<xsl:choose>
+<xsl:when test="comp/logo">newPage</xsl:when>
+<xsl:when test="comp/photo">newPage</xsl:when>
+<xsl:when test="comp/*/text()">newPage</xsl:when>
+<xsl:when test="descl/text()">newPage</xsl:when>
+<xsl:when test="descc/text()">newLeftPage</xsl:when>
+<xsl:otherwise>newLeftPage</xsl:otherwise>
+</xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="brkImgTopo">
+<xsl:choose>
+<xsl:when test="comp/logo">newLeftPage imgXL</xsl:when>
+<xsl:when test="comp/photo">newLeftPage imgXL</xsl:when>
+<xsl:when test="comp/*/text()">newLeftPage imgXL</xsl:when>
+<xsl:when test="descl/text()">newLeftPage imgXL</xsl:when>
+<xsl:when test="descc/text()">imgXM</xsl:when>
+<xsl:otherwise>imgXL</xsl:otherwise>
+</xsl:choose>
+</xsl:variable>
+
+        <xsl:choose>
+        <xsl:when test="/RTG/MODE = 'Compact'">
+
+		<xsl:variable name="nblimit" select="count(SP/W) + count(SP/W/descc/text())" />
+		<xsl:variable name="nbsppage" select="floor(count(SP) div 2) + 1" />
+
+
+<xsl:choose>
+			<xsl:when test="$nblimit &gt; 40">
+				<div class="sc newPage">
+					<H2 class="SC">
+						<xsl:apply-templates select="." mode="qrcode" />
+						<xsl:if test="groupe/text()"><xsl:value-of select="groupe/text()"/> : </xsl:if>
+						<xsl:value-of select="name/text()"/> - 1
+					</H2>
+					<div>
+						<xsl:attribute name="class">
+							<xsl:choose>
+							<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'">topoimg imgM</xsl:when>
+							<xsl:otherwise>topoimg imgXL</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+							<xsl:choose>
+							<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'"><img src="bddimg/sc/F.{id/text()}.printh.jpg" /></xsl:when>
+							<xsl:otherwise><img src="bddimg/sc/F.{id/text()}.print.jpg" /></xsl:otherwise>
+							</xsl:choose>
+						
+						<xsl:apply-templates select="." mode="gps"/>
+					</div>
+				</div>
+				<div>
+					<xsl:attribute name="class">
+						<xsl:choose>
+						<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'">sc</xsl:when>
+						<xsl:otherwise>sc newPage</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+
+						<table class="all" cellspacing="0" cellpadding="0">
+						<thead>
+							<tr>
+								<th>n°</th>
+								<th>Cotation</th>
+								<th>Nom</th>
+								<xsl:choose>
+									<xsl:when test="../site_type='Bloc' or ../../site_type = 'Bloc'">
+										<th><img src="img/td.png" /></th>
+										<th><img src="img/e.png" /></th>	
+									</xsl:when>
+									<xsl:otherwise>
+										<th><img src="img/h.png" /></th>
+										<th><img src="img/d.png" /></th>	
+									</xsl:otherwise>
+								</xsl:choose>
+								<th width="18%">Type</th>
+								<th width="15%">Faites</th>
+							</tr>
+						</thead>
+						<tbody>
+							<xsl:apply-templates select="SP[position() &lt;= $nbsppage]">
+								<xsl:with-param name="startnb">0</xsl:with-param>
+							</xsl:apply-templates>
+						</tbody>
+						</table>
+				</div>
+				<div class="sc newPage">
+					<H2 class="SC">
+						<xsl:apply-templates select="." mode="qrcode" />
+						<xsl:if test="groupe/text()"><xsl:value-of select="groupe/text()"/> : </xsl:if>
+						<xsl:value-of select="name/text()"/> - 2
+					</H2>
+					<div>
+						<xsl:attribute name="class">
+							<xsl:choose>
+							<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'">topoimg imgM</xsl:when>
+							<xsl:otherwise>topoimg imgXL</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+							<xsl:choose>
+							<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'"><img src="bddimg/sc/F.{id/text()}.printh.jpg" /></xsl:when>
+							<xsl:otherwise><img src="bddimg/sc/F.{id/text()}.print.jpg" /></xsl:otherwise>
+							</xsl:choose>
+						<xsl:apply-templates select="." mode="gps"/>
+					</div>
+				</div>
+				<div>
+					<xsl:attribute name="class">
+						<xsl:choose>
+						<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'">sc</xsl:when>
+						<xsl:otherwise>sc newPage</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+						<table class="all" cellspacing="0" cellpadding="0">
+						<thead>
+							<tr>
+								<th>n°</th>
+								<th>Cotation</th>
+								<th>Nom</th>
+								<xsl:choose>
+									<xsl:when test="../site_type='Bloc' or ../../site_type = 'Bloc'">
+										<th><img src="img/td.png" /></th>
+										<th><img src="img/e.png" /></th>	
+									</xsl:when>
+									<xsl:otherwise>
+										<th><img src="img/h.png" /></th>
+										<th><img src="img/d.png" /></th>	
+									</xsl:otherwise>
+								</xsl:choose>	
+								<th width="18%">Type</th>
+								<th width="15%">Faites</th>
+							</tr>
+						</thead>
+						<tbody>
+							<xsl:apply-templates select="SP[position() &gt; $nbsppage]">
+								<xsl:with-param name="startnb" select="$nbsppage"/>
+							</xsl:apply-templates>
+						</tbody>
+						</table>
+				</div>
+
+			</xsl:when>
+			<xsl:otherwise>
+				<div class="sc newPage">
+					<H2 class="SC">
+						<xsl:apply-templates select="." mode="qrcode" />
+						<xsl:if test="groupe/text()"><xsl:value-of select="groupe/text()"/> : </xsl:if>
+						<xsl:value-of select="name/text()"/>
+					</H2>
+					<div>
+						<xsl:attribute name="class">
+							<xsl:choose>
+							<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'">topoimg imgM</xsl:when>
+							<xsl:otherwise>topoimg imgXL</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+							<xsl:choose>
+							<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'"><img src="bddimg/sc/F.{id/text()}.printh.jpg" /></xsl:when>
+							<xsl:otherwise><img src="bddimg/sc/F.{id/text()}.print.jpg" /></xsl:otherwise>
+							</xsl:choose>
+						<xsl:apply-templates select="." mode="gps"/>
+					</div>
+				</div>
+				<div>
+					<xsl:attribute name="class">
+						<xsl:choose>
+						<xsl:when test="../site_type = 'Bloc' or ../../site_type = 'Bloc'">sc</xsl:when>
+						<xsl:otherwise>sc newPage</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					<xsl:if test="SP/W">
+						<table class="all" cellspacing="0" cellpadding="0">
+						<thead>
+							<tr>
+								<th>n°</th>
+								<th>Cotation</th>
+								<th>Nom</th>
+								<xsl:choose>
+									<xsl:when test="../site_type='Bloc' or ../../site_type = 'Bloc'">
+										<th><img src="img/td.png" /></th>
+										<th><img src="img/e.png" /></th>	
+									</xsl:when>
+									<xsl:otherwise>
+										<th><img src="img/h.png" /></th>
+										<th><img src="img/d.png" /></th>	
+									</xsl:otherwise>
+								</xsl:choose>	
+								<th width="18%">Type</th>
+								<th width="15%">Faites</th>
+							</tr>
+						</thead>
+						<tbody>
+							<xsl:apply-templates select="SP"/>
+						</tbody>
+						</table>
+					</xsl:if>
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
+		
+	</xsl:when>
+	<xsl:otherwise>
+		<div class="sc {$brkSCTopo}">
+			<H2 class="SC">
+				<xsl:apply-templates select="." mode="qrcode" />
+				<xsl:if test="groupe/text()"><xsl:value-of select="groupe/text()"/> : </xsl:if>
+				<xsl:value-of select="name/text()"/>
+			</H2>
+			<xsl:apply-templates select="comp" mode="img"/>
+			<xsl:choose>
+				<xsl:when test="descl/text()">
+					<xsl:apply-templates select="descl"/>
+				</xsl:when>
+				<xsl:when test="descc/text()">
+					<xsl:apply-templates select="descc"/>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:apply-templates select="comp"/>
+
+			<div class="topoimg {$brkImgTopo}">
+				<img src="bddimg/sc/F.{id/text()}.print.jpg" />
+				<xsl:apply-templates select="." mode="gps"/>
+			</div>
+			<xsl:if test="SP/W">
+			  <table class="all" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th>n°</th>
+						<th>Cotation</th>
+						<th>Nom</th>
+								<xsl:choose>
+									<xsl:when test="../site_type='Bloc' or ../../site_type = 'Bloc'">
+										<th><img src="img/td.png" /></th>
+										<th><img src="img/e.png" /></th>	
+									</xsl:when>
+									<xsl:otherwise>
+										<th><img src="img/h.png" /></th>
+										<th><img src="img/d.png" /></th>	
+									</xsl:otherwise>
+								</xsl:choose>		
+						<th width="18%">Type</th>
+						<th width="15%">Faites</th>
+					</tr>
+				</thead>
+				<tbody>
+					<xsl:apply-templates select="SP"/>
+				</tbody>
+				</table>
+        				
+			</xsl:if>
+			<xsl:apply-templates select=".//COMMENTS" />		 
+    </div>
+	</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="SP">
+	<xsl:param name="startnb">0</xsl:param>
+	<xsl:apply-templates select="W"><xsl:with-param name="pos" select="position() + $startnb"/><xsl:with-param name="descc" select="descc/text()"/><xsl:with-param name="descl" select="descl/text()"/></xsl:apply-templates>
+</xsl:template>
+
+<xsl:template match="W">
+	<xsl:param name="pos"/>
+	<xsl:param name="descc"/>
+	<xsl:param name="descl"/>
+	<xsl:variable name="mod" select="$pos mod 2"/>
+	<tr class="r{$mod}">
+		<td>
+			<xsl:choose>
+				<xsl:when test="count(../W) &gt; 1">
+					<xsl:value-of select="$pos"/>.<xsl:value-of select="position()"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$pos"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<!--<xsl:if test="position() = 1">
+				<xsl:value-of select="$pos"/>
+			</xsl:if>-->
+		</td>
+		<td>
+			<div class="cot c{substring(cot,1,1)}"> 
+				<xsl:value-of select="cot"/><xsl:if test="comp/cotemorfo/text()">/<xsl:value-of select="comp/cotemorfo/text()" /></xsl:if>
+			</div>
+			<xsl:apply-templates select="t/recomandation"/>
+		</td>
+		<td class="tname">
+			<xsl:choose>
+				<xsl:when test="count(../W) &gt; 3"><xsl:apply-templates select="name/text()"/></xsl:when>
+				<xsl:when test="not(name/text())"><xsl:apply-templates select="$descc"/></xsl:when>
+				<!--
+                                <xsl:when test="name/text() != $descc">
+					<xsl:apply-templates select="$descc"/> - <xsl:apply-templates select="name/text()"/>
+				</xsl:when>
+                                -->
+				<xsl:otherwise> <xsl:apply-templates select="name/text()"/></xsl:otherwise>
+			</xsl:choose>
+		</td>
+
+		<xsl:choose>
+			<xsl:when test="../../../site_type='Bloc' or ../../../../site_type = 'Bloc'">
+				<td>
+					<xsl:choose>
+						<xsl:when test="td='assis'">DA</xsl:when>
+						<xsl:when test="td='debout'">DD</xsl:when>
+					</xsl:choose>
+				</td>	
+				<td>
+					<xsl:apply-templates select="../e"/>
+				</td>
+			</xsl:when>
+			<xsl:otherwise>
+				<td>
+					<xsl:apply-templates select="h"/>
+				</td>
+				<td>
+					<xsl:apply-templates select="nbd"/>
+				</td>	
+			</xsl:otherwise>
+		</xsl:choose>
+
+		<td>
+			<xsl:apply-templates select="t/profil"/>
+			<!--<xsl:apply-templates select="t/prises"/>
+			<xsl:apply-templates select="t/escalade"/>-->
+		</td>		
+		<td><!--<xsl:apply-templates select="COMMENTS"/>-->
+			<div class="validway">&#160;</div>
+		</td>
+
+	</tr>
+	<xsl:choose>
+		<xsl:when test="/RTG/MODE = 'Compact'">
+		     <xsl:choose>
+			<xsl:when test="descc/text()">
+			     <tr class="r{$mod}">
+			         <td colspan="2"></td>
+				 <td colspan="6" class="tdescc"><xsl:apply-templates select="descc/text()"/></td>
+			    </tr>
+			</xsl:when>
+		     </xsl:choose>
+		</xsl:when>
+		<xsl:otherwise>
+		     <xsl:choose>
+			<xsl:when test="descl/text()">
+			     <tr class="r{$mod}">
+			         <td colspan="2"></td>
+				 <td colspan="6" class="tdescc"><xsl:apply-templates select="descl/text()"/></td>
+			    </tr>
+			</xsl:when>
+			<xsl:when test="descc/text()">
+			     <tr class="r{$mod}">
+			         <td colspan="2"></td>
+				 <td colspan="6" class="tdescc"><xsl:apply-templates select="descc/text()"/></td>
+			    </tr>
+			</xsl:when>
+			<xsl:when test="../descl/text()">
+			     <tr class="r{$mod}">
+			         <td colspan="2"></td>
+				 <td colspan="6" class="tdescc"><xsl:apply-templates select="../descl/text()"/></td>
+			    </tr>
+			</xsl:when>
+		     </xsl:choose>
+		</xsl:otherwise>
+        </xsl:choose>
+</xsl:template>
+<xsl:template match="COMMENTS">
+		<xsl:if test="count(COMMENT) &gt; 0">
+			<div class="comments">
+				<div class="head">Les commentaires</div>
+				<div class="body">
+					<xsl:apply-templates select="COMMENT"/>
+				</div>
+			</div>
+		</xsl:if>
+
+</xsl:template>
+
+<xsl:template match="COMMENT">
+	<div class="comment">
+		<div class="commentMeta">
+			<div class="commentQui"><xsl:value-of select="substring-before(commentaires_qui/text(),'@')"/></div>
+			<div class="commentQuand"><xsl:value-of select="substring-before(commentaires_date/text(),' ')"/></div>
+		</div>
+		<div class="commentDatas">
+			<div class="commentText"><xsl:apply-templates select="commentaires_data/*"/></div>
+		</div>
+	</div>
+</xsl:template>
+
+<xsl:template match="commentaires_data/text">
+	<xsl:value-of select="text()"/>
+</xsl:template>
+<xsl:template match="commentaires_data/recommandation">
+	<xsl:if test="text() &gt; 0">	
+		[<xsl:value-of select="text()"/>★]&#160;
+	</xsl:if>
+</xsl:template>
+
+
+
+
+
+<xsl:template match="PI">
+	<xsl:choose>
+		<xsl:when test="type/text() = 'caf'">
+		</xsl:when>
+		<xsl:when test="type/text() = 'ffme'">
+		</xsl:when>
+		<xsl:when test="type/text() = 'climbingcrew'">
+		</xsl:when>		
+		<xsl:when test="descl/text() or comp/* or lon or lat">
+			<div class="pi">
+				<H3 class="PI"><xsl:value-of select="descc/text()"/></H3>
+				<xsl:apply-templates select="." mode="gps"/>
+				<xsl:apply-templates select="comp" mode="img"/>
+				<xsl:apply-templates select="descl"/>
+				<xsl:apply-templates select="comp"/>
+			</div>
+		</xsl:when>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="PI" mode="compact">
+	<xsl:choose>
+		<xsl:when test="descl/text() or comp/* or lon or lat">
+			<div class="pi">
+
+	<xsl:variable name="id" select="generate-id(.)"/>
+	<div class="desc">
+		<div class="head"><xsl:value-of select="descc/text()"/></div>
+		<xsl:if test="descl/text() or lon or lat">
+			<xsl:apply-templates select="." mode="gps"/>
+			<xsl:if test="descl/text()">
+				<div id="{name()}-{$id}"><xsl:value-of select="descl/text()"/></div>
+				<script type="text/javascript">
+					var text = document.getElementById("<xsl:value-of select="name()"/>-<xsl:value-of select="$id"/>").innerHTML.replace(/§/g,"\n");
+					text = rtg_markdownrender.makeHtml(text);
+					document.getElementById("<xsl:value-of select="name()"/>-<xsl:value-of select="$id"/>").innerHTML = text;
+				</script>
+			</xsl:if>
+		</xsl:if>
+	</div>
+			</div>
+		</xsl:when>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="*" mode="gps">
+	<div class="gps">
+		<span>Latitude : <span class="value"><xsl:apply-templates select="lat" mode="gps"/></span></span>
+		<span>Longitude : <span class="value"><xsl:apply-templates select="lon" mode="gps"/></span></span>
+	</div>
+</xsl:template>
+<xsl:template match="lat|lon" mode="gps">
+	<xsl:variable name="d" select="floor(text())"/>
+	<xsl:variable name="m" select="floor((text() - $d) * 60 )"/>
+	<xsl:variable name="s" select="floor( (text() - $d - ($m div 60)) *3600 *10000) div 10000 "/>
+	<xsl:value-of select="$d"/>° <xsl:value-of select="$m"/>'' <xsl:value-of select="$s"/>'
+</xsl:template>
+<xsl:template match="PI" mode="club">
+	<xsl:variable name="type"><xsl:value-of select="type/text()"/></xsl:variable>
+	<xsl:choose>
+		<xsl:when test="type/text() = 'climbingcrew'">
+			<li>
+				<xsl:value-of select="descc/text()"/>
+			</li>
+		</xsl:when>
+		<xsl:when test="type/text() = 'caf'">
+			<li>
+				<xsl:value-of select="/RTG/PI/*[name() = $type]/libelle/text()"/> : <xsl:value-of select="descc/text()"/>
+			</li>
+		</xsl:when>
+		<xsl:when test="type/text() = 'ffme'">
+			<li>
+				<xsl:value-of select="/RTG/PI/*[name() = $type]/libelle/text()"/> : <xsl:value-of select="descc/text()"/>
+			</li>		
+		</xsl:when>
+	</xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="PI" mode="getID">
+	<xsl:if test="position() = 1"><xsl:value-of select="generate-id(.)"/></xsl:if>
+</xsl:template>
+
+<xsl:template match="PI" mode="full">
+	<xsl:choose>
+		<xsl:when test="type/text() = 'caf' or type/text() = 'ffme' or type/text() = 'climbingcrew'">
+			<xsl:variable name="id"><xsl:value-of select="id/text()"/></xsl:variable>
+			<xsl:variable name="uid"><xsl:apply-templates select="//PI[id/text() = $id]" mode="getID"/></xsl:variable>
+			<xsl:variable name="type"><xsl:value-of select="type/text()"/></xsl:variable>
+			<xsl:variable name="icon">/img/<xsl:value-of select="/RTG/PI/*[name() = $type]/icon/text()" /></xsl:variable>
+			<xsl:if test="generate-id(.) = $uid">
+				<div class="pi newPage">
+					<H3 class="PI">
+						<xsl:apply-templates select="." mode="qrcode" />
+						<img src="{$icon}" />
+						<xsl:value-of select="descc/text()"/> 
+						<xsl:if test="$type != 'climbingcrew'">
+							(<xsl:value-of select="/RTG/PI/*[name() = $type]/libelle/text()"/>)
+						</xsl:if>
+					</H3>
+					<xsl:call-template name="map"><xsl:with-param name="filter">pi-<xsl:value-of select="$id"/></xsl:with-param></xsl:call-template>
+					<xsl:apply-templates select="comp" mode="img"/>
+					<xsl:apply-templates select="descl"/>
+					<xsl:apply-templates select="comp"/>
+				</div>
+			</xsl:if>
+		</xsl:when>
+	</xsl:choose>
+</xsl:template>
+
+
+<xsl:template match="*" mode="qrcode">
+	<xsl:variable name="hash"><xsl:value-of select="translate(name(), $uppercase,$smallcase)" />/<xsl:value-of select="id/text()" /></xsl:variable>
+	<img src="/img/qrcode.php?id=http%3A%2F%2Fwww.readytogrimpe.climbing-crew.fr/{$hash}" class="qrcode"/>
+</xsl:template>
+
+<xsl:template name="map">
+	<xsl:param name="filter"/>
+	<xsl:variable name="id" select="generate-id(.)"/>
+	<div class="plan">
+		<div class="head">Plan</div>
+		<div class="outermap">
+			<div class="mapblockF">
+					<div id="map-1-{name()}-{$id}" class="mapblock">
+					CARTE 1
+					</div>
+			</div>
+			<div class="mapblockF">
+					<div id="map-2-{name()}-{$id}" class="mapblock">
+					CARTE 2
+					</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		rtg_newMap('map-1-<xsl:value-of select="name()"/>-<xsl:value-of select="$id"/>','<xsl:value-of select="lat"/>','<xsl:value-of select="lon"/>',12,google.maps.MapTypeId.ROADMAP,'<xsl:value-of select="$filter"/>');
+		rtg_newMap('map-2-<xsl:value-of select="name()"/>-<xsl:value-of select="$id"/>','<xsl:value-of select="lat"/>','<xsl:value-of select="lon"/>',16,google.maps.MapTypeId.HYBRID,'<xsl:value-of select="$filter"/>');
+	</script>
+</xsl:template>
+
+<xsl:template match="h">
+	<xsl:if test="text() &gt; 0">
+		<div class="h"><xsl:value-of select="text()"/>m</div>
+	</xsl:if>
+</xsl:template>
+<xsl:template match="nbd">
+	<xsl:if test="text() &gt; 0">
+		<div class="ndb"><xsl:value-of select="text()"/></div>
+	</xsl:if>
+</xsl:template>
+
+
+<xsl:template match="t/*">
+	<div class="info t_{name()}"><xsl:apply-templates /></div>
+</xsl:template>
+
+<xsl:template match="t/*/*">
+	<xsl:variable name="id"><xsl:value-of select="translate(translate(normalize-space(text()), $uppercase,$smallcase),' ','')"/></xsl:variable>
+	<img src="img/{name()}_{$id}.png" alt="{$id}"/>
+</xsl:template>
+
+
+<xsl:template match="descl">
+<xsl:if test="text()">
+	<xsl:variable name="id" select="generate-id(.)"/>
+	<div class="desc">
+		<div class="head">Description</div>
+		<div class="{name()}" id="{name()}-{$id}"><xsl:value-of select="text()"/></div>
+	</div>
+	<script type="text/javascript">
+	var text = document.getElementById("<xsl:value-of select="name()"/>-<xsl:value-of select="$id"/>").innerHTML.replace(/§/g,"\n");
+	text = rtg_markdownrender.makeHtml(text);
+	document.getElementById("<xsl:value-of select="name()"/>-<xsl:value-of select="$id"/>").innerHTML = text;
+	</script>
+	<xsl:if test="string-length(text()) &gt; 3500">
+		<div class="newPage">&#160;</div>
+		<div class="newPage">&#160;</div>
+	</xsl:if>
+</xsl:if>
+</xsl:template>
+<xsl:template match="descc">
+	<xsl:variable name="id" select="generate-id(.)"/>
+	<div class="desc">
+		<div class="head">Description</div>
+		<div class="{name()}" id="{name()}-{$id}"><xsl:value-of select="text()"/></div>
+	</div>
+</xsl:template>
+
+
+
+
+
+<xsl:template match="comp/*">
+	<xsl:variable name="compid"><xsl:value-of select="name()" /></xsl:variable>
+	<xsl:variable name="value"><xsl:value-of select="text()" /></xsl:variable>
+		<div class="label"><xsl:value-of select="//complements/*/*[name() = $compid]/nom/text()" /></div>
+		<xsl:choose>
+			<xsl:when test="//complements/*/*[name() = $compid]/mode/text() = 'select'">
+				<div class="value"><!--<xsl:copy-of select="//complements/*/*[name() = $compid]/valeurs"/>-->
+					<xsl:value-of select="//complements/*/*[name() = $compid]/valeurs/*[name() = $value]/text()" />
+				</div>
+			</xsl:when>		
+			<xsl:when test="//complements/*/*[name() = $compid]/mode/text() = 'qualite'">
+				<xsl:variable name="col"><xsl:value-of select="text() + 3" /></xsl:variable>
+				<div class="value bg{$col}">
+					<xsl:value-of select="//complements/*/*[name() = $compid]/valeurs/valeurs[@id = $value]/text()" />
+				</div>
+			</xsl:when>
+			<xsl:when test="//complements/*/*[name() = $compid]/mode/text() = 'url'">
+				<div class="value">
+					<a href="{text()}"><xsl:value-of select="text()"/></a>
+				</div>
+			</xsl:when>			
+			<xsl:otherwise>
+				<div class="value">
+					<xsl:value-of select="$value"/>
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
+ 
+</xsl:template>
+
+
+<xsl:template match="comp/ouvreur"/>
+<xsl:template match="comp/logo"/>
+<xsl:template match="comp/photo" />
+<xsl:template match="comp">
+<div class="{name()}">
+	<div class="head">Compléments d’informations</div>
+	<xsl:apply-templates />
+</div>
+</xsl:template>
+
+
+
+<xsl:template match="comp" mode="img">
+<xsl:if test="logo or photo">
+<div class="{name()}-img comp">
+	<xsl:apply-templates mode="img"/>
+</div>
+</xsl:if>
+</xsl:template>
+<xsl:template match="comp/*"  mode="img"/>
+<xsl:template match="comp/logo"  mode="img">
+<div class="comp_{name()}">
+	<img src="bddimg/comp/F.{text()}.jpg" class="imgL"/>
+</div>
+</xsl:template>
+
+<xsl:template match="comp/photo"  mode="img">
+<div class="comp_{name()}" >
+	<img src="bddimg/comp/F.{text()}.jpg" />
+</div>
+</xsl:template>
+
+</xsl:stylesheet>

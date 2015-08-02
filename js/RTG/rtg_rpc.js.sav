@@ -1,0 +1,593 @@
+ var baseUrl="/RTG/"
+
+
+function rtg_setDatas(form,wid)
+{
+	rtg_setPrgBar('#savPrgBar',50,'Evoie des données','progress-bar-info');
+	var data = form.serializeArray();
+	//console.log(data)
+	var s = rtg_setToBdd('rpc/rtg_setdatas.php',data);
+	//console.log(s)
+	if (s['Status'] == "OK")
+	{
+		rtg_setPrgBar('#savPrgBar',100,'Sauvegarde completée','progress-bar-success');
+		return s['id'];
+	}
+	else
+	{
+		rtg_setPrgBar('#savPrgBar',100,'Erreur '& s['Message'],'progress-bar-danger');
+	}
+	rtg_clearCacheData();
+}
+
+function rtg_setDatasW(form,wid)
+{
+	var data = form.serializeArray();
+	//console.log(data)
+	rtg_setPrgBar('#savPrgBar',50,'Supresssion du cache','progress-bar-info');
+	rtg_clearCacheData()
+	rtg_setPrgBar('#savPrgBar',60,'Sauvegarde des données','progress-bar-info');
+	var s = rtg_setToBdd('rpc/rtg_setdatas.php',data);
+	if (s['Status'] == "OK")
+	{
+		wid = s['id'];
+		rtg_setPrgBar('#savPrgBar',70,'Génération des images','progress-bar-info');
+		rtg_generateImgs(wid);
+		return wid;
+	}
+	else
+	{
+		rtg_setPrgBar('#savPrgBar',100,'Erreur '& s['Message'],'progress-bar-danger');
+	}
+	
+	
+}
+
+
+
+function rtg_img_resize(src,MAX_HEIGHT,end)
+{
+	var image = new Image();
+	image.src = src;
+	image.onload = function(){
+		var canvas = document.createElement('canvas');
+		if(image.height > MAX_HEIGHT) {
+			image.width *= MAX_HEIGHT / image.height;
+			image.height = MAX_HEIGHT;
+		}
+		var ctx = canvas.getContext("2d");
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		canvas.width = image.width;
+		canvas.height = image.height;
+		ctx.drawImage(image, 0, 0, image.width, image.height);
+		var resizesrc = canvas.toDataURL('image/jpeg');
+		//console.log(resizesrc);
+		
+		end(resizesrc);
+	};
+	
+}
+function rtg_imgFile_handleFileSelect(inputFileId,inputImgId,maxHeight)
+{               
+                if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+                    alert('The File APIs are not fully supported in this browser.');
+                    return;
+                }   
+
+                input = document.getElementById(inputFileId);
+                if (!input) {
+                  alert("Um, couldn't find the fileinput element.");
+               }
+               else if (!input.files) {
+                  alert("This browser doesn't seem to support the `files` property of file inputs.");
+               }
+               else if (!input.files[0]) {
+                  //console.log('pas de photo a uploader');
+               }
+               else {
+                  file = input.files[0];
+                  var fr = new FileReader();
+                  fr.readAsDataURL(file);
+                  fr.onload = function() {
+					  rtg_img_resize(fr.result,maxHeight,function(resizesrc) {$('#'+inputImgId).val(resizesrc);})
+				  };
+               }
+}
+
+
+function rtg_setPrgBar(id,pc,info,style)
+{
+	$(id).html('<div class="progress"><div class="progress-bar '+style+'" role="progressbar" aria-valuenow="'+pc+'" aria-valuemin="0" aria-valuemax="100" style="width: '+pc+'%;">'+info+'</div></div>');
+}
+
+function rtg_generateImgs(wid)
+{
+	rtg_clearCacheData()
+	
+	// plot 1er img
+	rtg_setPrgBar('#savPrgBar',70,'Génération de l\'image de la voie','progress-bar-info');
+	rtg_WTopo(wid,'img-gen')
+	var dataW = rtg_getWdatas(wid)
+	var dataSP = rtg_getSPdatas(dataW['sp'])
+	
+	window.setTimeout (
+		// sav 1er img
+		function(){
+			rtg_setImg("w",wid,betaCreator.getImage(1, 'jpg', 0));
+			// plot 2eme img
+			rtg_setPrgBar('#savPrgBar',80,'Génération de l\'image du départ','progress-bar-info');
+			rtg_SPTopo(dataW['sp'],'img-gen')
+			// sav 2eme img
+			window.setTimeout(
+			function(){
+					rtg_setImg("sp",dataW['sp'],betaCreator.getImage(1, 'jpg', 0));
+					// plot 3eme img
+					rtg_setPrgBar('#savPrgBar',90,'Génération de l\'image du secteur','progress-bar-info');
+					rtg_SCTopo(dataSP['sc'],'img-gen')
+					// sav 3eme img
+					window.setTimeout(
+					function(){
+						rtg_setImg("sc",dataSP['sc'],betaCreator.getImage(1, 'jpg', 0));
+						rtg_setPrgBar('#savPrgBar',100,'Sauvegarde completée','progress-bar-success');
+					}, 2000);
+			}, 2000);
+		}, 2000);
+}
+
+
+function rtg_setImg(ptype,pid,pimg)
+{
+	/*
+    var img = new Image();
+	img.src = "data:image/  png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9oMCRUiMrIBQVkAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAADElEQVQI12NgoC4AAABQAAEiE+h1AAAAAElFTkSuQmCC";
+    /// create an off-screen canvas
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext("2d");
+    
+    var canvasCopy = document.createElement("canvas");
+    var copyContext = canvasCopy.getContext("2d");
+    /// set its dimension to target size
+    canvas.width = 1024;
+    canvas.height = 700;
+
+
+		var ratio = 1;
+		var maxWidth = 900;
+		var maxHeight = 700;
+		
+        if(img.width > maxWidth)
+            ratio = maxWidth / img.width;
+        else if(img.height > maxHeight)
+            ratio = maxHeight / img.height;
+
+        canvasCopy.width = img.width;
+        canvasCopy.height = img.height;
+        copyContext.drawImage(img, 0, 0);
+
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        ctx.drawImage(canvasCopy, 0, 0, canvasCopy.width, canvasCopy.height, 0, 0, canvas.width, canvas.height);
+
+
+
+
+    /// draw source image into the off-screen canvas:
+    //ctx.drawImage(img, 0, 0, width, height);
+
+    /// encode image to data-uri with base64 version of compressed image
+    //canvasCopy.toDataURL();
+	
+	pimg = canvasCopy.toDataURL();
+	*/
+	
+	rtg_img_resize(pimg,1080,function(resizesrc) {
+			var post = {type:ptype, id:pid, h:'F', img:resizesrc};
+			//console.log('1080 : '+post);
+			rtg_setToBdd("rpc/rtg_setimg.php",post)
+			})
+    rtg_img_resize(pimg,500,function(resizesrc) {
+			var post = {type:ptype, id:pid, h:'W', img:resizesrc};
+			//console.log('720 : '+post);
+			rtg_setToBdd("rpc/rtg_setimg.php",post)
+			})    
+}
+
+
+function rtg_clearCacheData()
+{
+	rtg_plotMapInfos_datainfos = [];
+	rtg_getWInfos_datainfos = {};
+	rtg_getSPInfos_datainfos = {};
+	rtg_getSCInfos_datainfos = {};
+	rtg_getSIInfos_datainfos = {};
+}
+
+
+
+function rtg_insertSC(siid)
+{
+	var html = rtg_getHtml(baseUrl+"form_sc.php?action=scInsert&siid="+siid);
+	rtg_dialog('Création d\'un secteur',html);
+}
+function rtg_updateSC(spid)
+{
+	var html = rtg_getHtml(baseUrl+"form_sc.php?action=scUpdate&id="+spid);
+	rtg_dialog('Mise à jour',html);
+}
+function rtg_updateSP(spid)
+{
+	 //console.log('rtg_updateSP '+spid)
+		rtg_dialog('Mise à jour',rtg_getHtml(baseUrl+"form_sp.php?action=spUpdate&id="+spid));
+}
+function rtg_insertSP(scid)
+{
+	rtg_switchMap()
+	var marker = new google.maps.Marker({
+            position: map.getCenter(), //map Coordinates where user right clicked
+            map: map,
+            draggable:true, //set marker draggable
+            animation: google.maps.Animation.DROP, //bounce animation
+            title:"New",
+            icon: {
+				path: google.maps.SymbolPath.CIRCLE,
+				scale: 5,
+				strokeWeight: 2,
+				strokeColor: rtg_getColor('n'),
+				fillColor:  rtg_getColor('n'),
+				fillOpacity: 1
+			}
+        });
+		google.maps.event.addListener(marker, 'click', function(event) { 
+							rtg_dialog('Création d\'un départ',rtg_getHtml(baseUrl+"form_sp.php?action=spInsert&sc_id="+scid+"&lat="+this.position.lat()+"&lon="+this.position.lng()));
+		});
+                
+}
+function rtg_updateSI(siid)
+{
+	rtg_dialog('Mise à jour',rtg_getHtml(baseUrl+"form_si.php?action=siUpdate&id="+siid));
+}
+function rtg_insertSI()
+{
+	var html = rtg_getHtml(baseUrl+"form_si.php?action=siInsert");
+	rtg_dialog('Création d\'un site',html);
+                
+}
+function rtg_insertW(spid)
+{
+	var html = rtg_getHtml(baseUrl+"form_w.php?action=wInsert&spid="+spid);
+	rtg_dialog('Création d\'une voie',html);
+}
+function rtg_updateW(wid)
+{
+	rtg_dialog('Mise à jour',rtg_getHtml(baseUrl+"form_w.php?action=wUpdate&id="+wid));
+}
+function rtg_duplicateW(wid)
+{
+	rtg_dialog('Dupliquer',rtg_getHtml(baseUrl+"form_w.php?action=wCopy&id="+wid));
+}
+
+
+function rtg_setToBdd(url,post)
+ {
+   var r;
+    $.ajax({
+        url: baseUrl+url,
+        dataType:"JSON",
+        type:"POST",
+        async: false,
+        data: post,
+	complete: function (xhr, datas){
+		try {	
+			eval('r='+xhr["responseText"]);
+		}
+		catch(err){
+			console.log(xhr["responseText"])
+		}
+	}
+    })
+    return r;
+ }
+
+ function rtg_getFromBdd(url,post)
+ {
+   var r;
+   //var dataPost="?type="+post["type"]+"&id="+post["id"]
+    $.ajax({
+        url: baseUrl+url,//+dataPost,
+        dataType:"JSON",
+        type:"POST",
+        async: false,
+        data: post,
+	complete: function (xhr, datas){
+		try {	
+			eval('r='+xhr["responseText"]);
+		}
+		catch(err){
+			console.log("Error parse : " + xhr["responseText"])
+		}
+	}
+    })
+    return r;
+ }
+  
+  
+  function rtg_getMapInfos(data,endFunc)
+  {
+	// mode deconnecter
+	
+	if (rtg_plotMapInfos_datainfos.length > 1)
+	{
+		rtg_plotMapInfos(rtg_plotMapInfos_datainfos)
+		return endFunc(rtg_plotMapInfos_datainfos)
+	}
+	else
+	{
+		// lit la base
+		$.post(baseUrl+"rpc/rtg_refreshMap.php",data,endFunc);
+	}
+  }
+
+  function rtg_getWdatas(wid)
+  {
+    if (rtg_getWInfos_datainfos[wid]) {  return rtg_getWInfos_datainfos[wid]; }
+    var r = rtg_getFromBdd("rpc/rtg_getdatas.php",{type:"w",id:wid});
+    		 console.log(wid+" "+r);
+    if (r['multi'])
+	{
+		 for (var i = 0; i < r['multi'].length; i++) {
+			 //console.log('mem W : '+r['multi'][i]['id']);
+			 rtg_getWInfos_datainfos[r['multi'][i]['id']] = r['multi'][i];
+		 }
+	}
+	else
+	{
+		rtg_getWInfos_datainfos[r['id']] = r;
+	}
+    return r;
+  }
+  
+  function rtg_getSPdatas(spid)
+  {
+    if (rtg_getSPInfos_datainfos[spid]) {  return rtg_getSPInfos_datainfos[spid]; }
+    var r = rtg_getFromBdd("rpc/rtg_getdatas.php",{type:"sp",id:spid});
+    if (r['multi'])
+	{
+		 for (var i = 0; i < r['multi'].length; i++) {
+			 //console.log('mem SP : '+r['multi'][i]['id']);
+			 rtg_getSPInfos_datainfos[r['multi'][i]['id']] = r['multi'][i];
+		 }
+	}
+	else
+	{
+		rtg_getSPInfos_datainfos[r['id']] = r;
+	}
+    return r;
+  }
+ 
+  function rtg_getSCdatas(scid)
+  {
+	if (rtg_getSCInfos_datainfos[scid]) {  return rtg_getSCInfos_datainfos[scid]; }
+	var r = rtg_getFromBdd("rpc/rtg_getdatas.php",{type:"sc",id:scid});
+	if (r['multi'])
+	{
+		 for (var i = 0; i < r['multi'].length; i++) {
+			 //console.log('mem SC : '+r['multi'][i]['id']);
+			 rtg_getSCInfos_datainfos[r['multi'][i]['id']] = r['multi'][i];
+		 }
+	}
+	else
+	{
+		rtg_getSCInfos_datainfos[r['id']] = r;
+	}
+	return r;
+  }
+
+  function rtg_getSIdatas(siid)
+  {
+	if (rtg_getSIInfos_datainfos[siid]) {  return rtg_getSIInfos_datainfos[siid]; }
+	var r = rtg_getFromBdd("rpc/rtg_getdatas.php",{type:"si",id:siid});
+	
+	if (r['multi'])
+	{
+		 for (var i = 0; i < r['multi'].length; i++) {
+			 //console.log('mem SI : '+r['multi'][i]['id']);
+			 rtg_getSIInfos_datainfos[r['multi'][i]['id']] = r['multi'][i];
+		 }
+	}
+	else
+	{
+		rtg_getSIInfos_datainfos[r['id']] = r;
+	}	
+	return r;
+  }
+  
+  
+  function preLoadDataSI(siid)
+  {
+	  // si deja en cache, on ne relie pas 
+	  if (rtg_getSIInfos_datainfos[siid]) {  return }
+
+	  var dataSI  = rtg_getSIdatas(siid);
+	  if (dataSI['multi'])
+	  {
+		  var sc = [];
+		  for (var i = 0; i < dataSI['multi'].length; i++)
+		  {
+				 sc = sc.concat(dataSI['multi'][i]['sc']);
+		  }
+		  var datasSC = rtg_getSCdatas(sc);
+		  if (datasSC['multi'])
+		  {
+			  var sp = [];
+			  for (var i = 0; i < datasSC['multi'].length; i++)
+			  {
+					 sp = sp.concat(datasSC['multi'][i]['sp']);
+			  }
+			  var datasSP = rtg_getSPdatas(sp);
+			  if (datasSP['multi'])
+		      {
+				  var  w = [];
+				  for (var i = 0; i < datasSP['multi'].length; i++)
+				  {
+						 w = w.concat(datasSP['multi'][i]['w']);
+				  }
+				  //console.log(w);
+				  //if (w.lenght > 0)
+				  //{
+					var datasW  = rtg_getWdatas(w);
+				  //}
+			  }
+		  }
+	  }
+  }
+  
+ 
+ 
+ 
+ 
+
+	
+	function rtg_regen_viewSCImg(sc,i)
+	{
+		// on genere les SP
+		var dataSC  = rtg_getSCdatas(sc[i]);
+		rtg_regen_viewSPImg(dataSC['sp'],0,function (){
+				rtg_setPrgBar('#savPrgBar',30,'Génération de l\'images d\'un secteur ('+(i+1)+'/'+sc.length+')','progress-bar-info');	
+				rtg_SCTopo(sc[i],'img-gen');
+				window.setTimeout (
+				function(){ 
+					rtg_regen_genSCImg(sc,i);
+				},2000);
+		});
+	}
+	
+	function rtg_regen_genSCImg(sc,i,nextsi)
+	{
+		rtg_setImg("sc",sc[i],betaCreator.getImage(1, 'jpg', 0));
+		console.log("Img SC "+i+" : "+sc[i])
+		if (sc.length > (i+1))
+		{
+			rtg_regen_viewSCImg(sc,(i+1));
+		}
+		else
+		{
+			rtg_setPrgBar('#savPrgBar',100,'Génération des l\'images finie','progress-bar-success');	
+		}
+	}	
+	
+	function rtg_regen_viewSPImg(sp,i,nextsc)
+	{
+		rtg_setPrgBar('#savPrgBar',50,'Génération de l\'image d\'un depart ('+(i+1)+'/'+sp.length+')','progress-bar-info');	
+		// on genere les voies
+		var dataSP  = rtg_getSPdatas(sp[i]);
+		console.log("w: "+dataSP['w']);
+		rtg_regen_viewWImg(dataSP['w'],0,function (){
+				// on genere l'images du sp
+				rtg_SPTopo(sp[i],'img-gen');
+				window.setTimeout (
+				function(){ 
+					rtg_regen_genSPImg(sp,i,nextsc);
+				},2000);
+		});
+	}
+	
+	function rtg_regen_genSPImg(sp,i,nextsc)
+	{
+		rtg_setImg("sp",sp[i],betaCreator.getImage(1, 'jpg', 0));
+		if (sp.length > (i+1))
+		{
+			rtg_regen_viewSPImg(sp,(i+1),nextsc);
+		}
+		else
+		{
+			console.log("nextsc");
+			nextsc();
+		}
+	}
+		
+	function rtg_regen_viewWImg(w,i,nextsp)
+	{
+		rtg_setPrgBar('#savPrgBar',80,'Génération de l\'image d\'une voie ('+(i+1)+'/'+w.length+')','progress-bar-info');	
+		rtg_WTopo(w[i],'img-gen');
+		window.setTimeout (
+		function(){ 
+			rtg_regen_genWImg(w,i,nextsp);
+		},2000);
+	}
+	
+	function rtg_regen_genWImg(w,i,nextsp)
+	{
+		
+		rtg_setImg("w",w[i],betaCreator.getImage(1, 'jpg', 0));
+		if (w.length > (i+1))
+		{
+			rtg_regen_viewWImg(w,(i+1),nextsp);
+		}
+		else
+		{
+			console.log("nextsp");
+			nextsp();
+		}
+	}
+ 
+ 
+ 
+function rtg_isAllow(action,id)
+{
+	if (action == "")
+		return true;
+	
+	if (action == "SIRead")
+	{
+		var dataSI = rtg_getSIdatas(id);
+		if (dataSI['public'] == '1')
+			return true;
+	}	
+	
+	var r = rtg_getUserRight();
+	if (rtg_isAdmin())
+			return true;
+	
+	if( Object.prototype.toString.call( r[action] ) === '[object Array]' )
+	{
+		if (r[action].indexOf(id) >= 0)
+			return true;
+	}
+	
+	if (action == "SIRead")
+	{
+		return rtg_isAllow("SIWrite",id);
+	}
+
+	return false;
+}
+
+ 
+
+
+var rtg_right=null;
+function rtg_getUserRight()
+{
+	if (rtg_right != null)
+		return rtg_right;
+	rtg_right = rtg_getFromBdd("rpc/rtg_getdatas.php",{type:"right"});
+	return rtg_right;
+}
+function rtg_cleanUserRight()
+{
+	rtg_right=null;
+}
+
+function rtg_isAdmin()
+{
+	return rtg_hasRight('admin');
+}
+
+function rtg_hasRight(right)
+{
+	var r = rtg_getUserRight();
+	if (r[right])
+		return true;
+	return false;
+}
+

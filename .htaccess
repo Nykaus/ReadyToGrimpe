@@ -1,0 +1,35 @@
+Options -Indexes 
+
+
+
+RewriteEngine On
+
+Rewriterule bddimg/sc/(.*jpg)	/bddimg/sc/img.php?imgsrc=$1 [L]
+
+
+RewriteCond %{HTTP_HOST} ^readytogrimpe.climbing-crew.fr(.*)$ [NC]
+RewriteRule ^(.*)$ http://www.readytogrimpe.climbing-crew.fr/$1 [R=301,L]
+
+Rewritecond %{REQUEST_URI} ^/print/
+Rewriterule /(.*)	/tohtml.php?hash=$1
+
+Rewritecond %{REQUEST_URI} ^/pdf/
+Rewriterule /(.*)	/toPdf.php [L,QSA]
+
+
+Rewritecond %{REQUEST_URI} ^/si/
+Rewriterule /(.*)	/index.php?hash=$1
+
+Rewritecond %{REQUEST_URI} ^/sc/
+Rewriterule /(.*)	/index.php?hash=$1
+Rewritecond %{REQUEST_URI} ^/sp/
+Rewriterule /(.*)	/index.php?hash=$1
+
+Rewritecond %{REQUEST_URI} ^/w/
+Rewriterule /(.*)	/index.php?hash=$1
+
+Rewritecond %{REQUEST_URI} ^/pi/
+Rewriterule /(.*)	/index.php?hash=$1
+
+
+

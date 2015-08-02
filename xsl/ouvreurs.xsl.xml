@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="html" indent="yes" />
+
+<xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
+<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+
+<xsl:template match="RTG" >
+	<div class="ouvreur"><xsl:apply-templates select="SI" /></div>
+</xsl:template>
+ 
+ 
+<xsl:template match="SI" >
+		<xsl:variable name="l"><xsl:apply-templates select=".//comp/ouvreur">
+			<xsl:with-param name="SIID"><xsl:value-of select="id"/></xsl:with-param>
+		</xsl:apply-templates></xsl:variable>
+		<xsl:value-of select="substring($l,2)" />
+</xsl:template>
+ 
+<xsl:template match="comp/ouvreur" ><xsl:param name="SIID"/>
+	<xsl:variable name="text"><xsl:value-of select="text()"/></xsl:variable>
+	<xsl:variable name="firstId">
+	<xsl:value-of select="generate-id(/RTG/SI[id = $SIID]//comp/ouvreur[text() = $text and position()=1])" />
+	</xsl:variable><xsl:if test="generate-id(.) = $firstId">,<xsl:text> </xsl:text><xsl:value-of select="text()" /></xsl:if>
+</xsl:template>
+
+
+
+
+</xsl:stylesheet>

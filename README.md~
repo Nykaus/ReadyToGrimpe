@@ -22,4 +22,3 @@ Ce projet utilise :
 - simplesamlphp : gestion de l'authentification ( https://simplesamlphp.org/ )
 - mmenu : interface look application mobile basé sur jquery ( http://mmenu.frebsite.nl/ )
 - bootstrap : css
-- font-awesome : http://fortawesome.github.io/Font-Awesome/

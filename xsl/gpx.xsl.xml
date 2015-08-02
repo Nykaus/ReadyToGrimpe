@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="html" indent="yes" />
+
+<xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
+<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+
+<xsl:template match="RTG" >
+	<gpx>
+		<xsl:apply-templates select="SI//PI|SI//SP" />
+	</gpx>
+</xsl:template>
+ 
+ 
+<xsl:template match="SP" >
+		  <wpt lat="{lat}" lon="{lon}">
+		    <name><xsl:value-of select="descc"/> <xsl:apply-templates select="W"/></name>
+		    <sym>Départ</sym>
+		  </wpt>
+</xsl:template>
+<xsl:template match="W" > - <xsl:value-of select="cot"/></xsl:template>
+<xsl:template match="PI" >
+		  <wpt lat="{lat}" lon="{lon}">
+		    <name><xsl:value-of select="descc"/></name>
+		    <sym><xsl:value-of select="type"/></sym>
+		  </wpt>
+</xsl:template>
+
+</xsl:stylesheet>

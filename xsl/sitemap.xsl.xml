@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="xml" indent="no" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>
+ 
+<xsl:template match="*|text()">
+	<xsl:apply-templates /> 
+</xsl:template>
+
+<xsl:template match="RTG">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+	<xsl:apply-templates /> 
+</urlset>
+</xsl:template>
+ 
+<xsl:template match="CHANGE" mode="change">
+     <lastmod xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><xsl:value-of select="substring(date/text(),0,11)"/></lastmod>
+</xsl:template>
+
+<xsl:template match="SI">
+<url xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+    <loc><xsl:value-of select="/RTG/SITEBASE/text()"/>si/<xsl:value-of select="id/text()"/>/<xsl:value-of select="name/text()"/></loc>
+    <xsl:apply-templates select="CHANGE" mode="change"/> 
+</url>
+<xsl:apply-templates /> 
+</xsl:template>
+
+<xsl:template match="SC">
+<url xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+    <loc><xsl:value-of select="/RTG/SITEBASE/text()"/>sc/<xsl:value-of select="id/text()"/>/<xsl:value-of select="name/text()"/></loc>
+    <xsl:apply-templates select="CHANGE" mode="change"/> 
+</url>
+<xsl:apply-templates /> 
+</xsl:template>
+
+<xsl:template match="SP">
+<url xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+    <loc><xsl:value-of select="/RTG/SITEBASE/text()"/>sp/<xsl:value-of select="id/text()"/>/<xsl:value-of select="descc/text()"/></loc>
+    <xsl:apply-templates select="CHANGE" mode="change"/> 
+</url>
+<xsl:apply-templates /> 
+</xsl:template>
+
+<xsl:template match="GRP">
+	<xsl:apply-templates /> 
+</xsl:template>
+
+<xsl:template match="W">
+<url xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+    <loc><xsl:value-of select="/RTG/SITEBASE/text()"/>w/<xsl:value-of select="id/text()"/>/<xsl:value-of select="name/text()"/></loc>
+    <xsl:apply-templates select="CHANGE" mode="change"/> 
+</url>
+<xsl:apply-templates /> 
+</xsl:template>
+
+<xsl:template match="PI">
+<url xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+    <loc><xsl:value-of select="/RTG/SITEBASE/text()"/>pi/<xsl:value-of select="id/text()"/>/<xsl:value-of select="descc/text()"/></loc>
+    <xsl:apply-templates select="CHANGE" mode="change"/> 
+</url>
+<xsl:apply-templates /> 
+</xsl:template>
+
+
+
+
+</xsl:stylesheet>

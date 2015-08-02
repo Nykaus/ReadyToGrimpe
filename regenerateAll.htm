@@ -1,0 +1,92 @@
+<div id="img-gen"></div>
+<script type="text/javascript">
+		
+	function regen() 
+	{
+			var dataSI  = rtg_getSIdatas(SI);
+			viewSCImg(dataSI['sc'],0);
+	}
+	
+	
+	function viewSCImg(sc,i)
+	{
+		console.log("viewSCImg "+i)
+		// on genere les SP
+		var dataSC  = rtg_getSCdatas(sc[i]);
+		viewSPImg(dataSC['sp'],0);
+		
+		// on genere l'images
+		rtg_SCTopo(sc[i],'img-gen');
+		window.setTimeout (
+		function(){ 
+			genSCImg(sc,i);
+		},2000);
+	}
+	
+	function genSCImg(sc,i)
+	{
+		rtg_setImg("sc",sp[i],betaCreator.getImage(1, 'jpg', 0));
+		console.log("Img SC "+i+" : "+sc[i])
+		if (sc.lenght > i)
+		{
+			viewSCImg(sc,(i+1));
+		}
+	}	
+	
+	function viewSPImg(sp,i)
+	{
+		console.log("viewSPImg "+i)
+		// on genere les voies
+		var dataSP  = rtg_getSPdatas(sp[i]);
+		viewWImg(dataSP['w'],0);
+		
+		// on genere l'images
+		rtg_SPTopo(sp[i],'img-gen');
+		window.setTimeout (
+		function(){ 
+			genWImg(sp,i);
+		},2000);
+	}
+	
+	function genSPImg(sp,i)
+	{
+		rtg_setImg("sp",sp[i],betaCreator.getImage(1, 'jpg', 0));
+		console.log("Img SP "+i+" : "+sp[i])
+		if (sp.lenght > i)
+		{
+			viewSPImg(sp,(i+1));
+		}
+	}
+		
+	function viewWImg(w,i)
+	{
+		console.log("viewWImg "+i)
+		rtg_WTopo(w[i],'img-gen');
+		window.setTimeout (
+		function(){ 
+			genWImg(w,i);
+		},2000);
+	}
+	
+	function genWImg(w,i)
+	{
+		
+		rtg_setImg("w",w[i],betaCreator.getImage(1, 'jpg', 0));
+		console.log("Img W "+i+" : "+w[i])
+		if (w.lenght > i)
+		{
+			viewWImg(w,(i+1));
+		}
+	}
+	
+	
+	
+</script>
+<div id="popupBody" class="modal-footer">
+  <div class="col-md-12">
+	<div class="col-md-7" id="savPrgBar"> </div>
+	<div class="col-md-5"> 
+		<a class="btn btn-primary" onclick="return regen();">Regenerer les images</a> 
+		<a class="btn btn-default" data-dismiss="modal" aria-hidden="true">Fermer</a>
+	</div>
+  </div>
