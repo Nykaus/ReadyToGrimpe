@@ -21,14 +21,13 @@ if (isset($_REQUEST["email"]) && isset($_REQUEST["ids"]))
 	 
 	 
 	 reset($arrayData);
-	 while(list($k,$v) = each($arrayData))
+	 foreach($arrayData as $k=>$v)
 	 {
 		$url .= $k."=".urlencode($v)."&";
 	 }
 	 echo '<a target="RTG" href="'.$url.'" target="_blank">'.$url.'</a><hr/>';
 }
 
-?>
 
 
 

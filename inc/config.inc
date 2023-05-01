@@ -1,13 +1,20 @@
 <?php
 
 
-$config["Bdd"]["server"] = 'climbingoortg.mysql.db';
-$config["Bdd"]["user"] = 'climbingoortg';
-$config["Bdd"]["password"] = 'azSSqX4XrfSd';
+//$config["Bdd"]["server"] = 'climbingoortg.mysql.db';
+//$config["Bdd"]["user"] = 'climbingoortg';
+//$config["Bdd"]["password"] = 'azSSqX4XrfSd';
+//$config["Bdd"]["bddname"] = "climbingoortg";
+
+$config["Bdd"]["server"] = 'localhost';
+$config["Bdd"]["user"] = 'root';
+$config["Bdd"]["password"] = 'root';
 $config["Bdd"]["bddname"] = "climbingoortg";
 
-$config["BaseDNSHttp"] = "http://www.readytogrimpe.climbing-crew.fr";
+$config["BaseDNSHttp"] = "https://readytogrimpe.local";
+//$config["BaseDNSHttp"] = "http://www.readytogrimpe.climbing-crew.fr";
 $config["BaseUrl"] =  "/";
+//$config["GeoportailKey"] = "gv75hsmz2ywmtajozkzq472t";
 $config["GeoportailKey"] = "gv75hsmz2ywmtajozkzq472t";
 
 $config["KeySign"]["HashType"] = MHASH_WHIRLPOOL;
@@ -25,17 +32,15 @@ $config["Auth"]["mail"]["subject"] = "Jeton d'authentification pour le site Read
 $config["Auth"]["mail"]["from"]    = "readytogrimpe@climbing-crew.fr";
 $config["Auth"]["mail"]["body"]    = "Bonjour,\nLe lien pour l'authentification est §link§\n Il est valable 10 jours.\nMerci\n";
 
-
 $config["Log"]["nbAff"] = 10;
-
+/*
 if (preg_match("/\/public_rtg\//",$GLOBALS['_SERVER']['SCRIPT_URL']))
 {
 	$config["BaseUrl"] = "/public_rtg/";
 	$config["Auth"]["BaseUrl"]    = "http://climbingoo.cluster007.ovh.net/public_rtg/login.php";
 	$config["Right"]["BaseUrl"]    = "http://climbingoo.cluster007.ovh.net/public_rtg/right.php";
 }
-
-
+*/
 
 
 $config["PI"]["p"]["libelle"] = "Parking";
@@ -228,7 +233,3 @@ $config['complements']['pi']['siteweb']['mode'] = 'url';
 $config['complements']['pi']['tel']['nom']  = 'Téléphone';
 $config['complements']['pi']['tel']['mode'] = 'text';
 
-
-
-
-?>

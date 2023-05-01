@@ -1,4 +1,4 @@
-<?php 
+<?php
 header('Content-Type: application/json; charset=UTF-8');
 $json = array();
 
@@ -9,49 +9,49 @@ include_once("../inc/mesvoies.inc");
 
 function getPiFromSi($siid)
 {
-		$r = array();
-		$q = "select distinct pi_id from topo_pi_site where site_id=$siid";
+	$r = array();
+	$q = "select distinct pi_id from topo_pi_site where site_id=$siid";
 
-		$d = $GLOBALS['Bdd']->fetch_all_array($q);
-		if (!empty($d))
+	$d = $GLOBALS['Bdd']->fetch_all_array($q);
+	if (!empty($d))
+	{
+		if (isset($d['pi_id']))
+			return $d['pi_id'];
+
+		for ($i=0;$i<sizeof($d);$i++)
 		{
-			if (isset($d['pi_id']))
-				return $d['pi_id'];
-				
-			for ($i=0;$i<sizeof($d);$i++)
-			{
-				$r[] = $d[$i]['pi_id'];
-			}
+			$r[] = $d[$i]['pi_id'];
 		}
-		return implode(',',$r);
+	}
+	return implode(',',$r);
 }
 
 function toJson($d,$isLeef=false)
 {
 	if (!empty($d))
 	{
-		
+
 		if ($isLeef)
 		{
-			
+
 			$leef=$d;
 			if (!$isLeef)
 				$leef = $d[0];
 			$j = array();
-			
+
 			foreach ($leef as $k => $v)
 			{
 				switch($k)
 				{
 					default:
 						$j[] = "\"".$k."\":\"".$v."\"";
-					break;
+						break;
 					case "array_pi":
 						$j[] = "\"".str_replace("array_","",$k)."\":[". getPiFromSi($v)."]";
 						break;
 					case "array_sc":
 						if ($v)
-							{
+						{
 							$q = "select secteur_id, secteur_groupe, secteur_ordre, groupe_ordre
 							from  topo_secteur 
 							LEFT JOIN topo_secteur_groupe 
@@ -68,42 +68,42 @@ function toJson($d,$isLeef=false)
 						}
 						else
 							$j[] = "\"".str_replace("array_","",$k)."\":[]";
-					break;
+						break;
 					case "array_sp":
 					case "array_w":
 						$j[] = "\"".str_replace("array_","",$k)."\":[".$v."]";
-					break;
+						break;
 					case "t":
 						if ($v)
 							$j[] = "\"".$k."\":".$v;
 						else
 							$j[] = "\"".$k."\":{}";
-					break;					
-					case "comp":					
+						break;
+					case "comp":
 						if (!preg_match("/^{.*}$/",$v) && !preg_match("/^\[.*\]$/",$v))
 							$v = "\"".preg_replace('/"/','\\"',$v)."\"";
-	
-						if ($v)	
+
+						if ($v)
 							$j[] = "\"".$k."\":".$v;
-					break;
+						break;
 					case "p":
 						$j[] = "\"".$k."\":\"".preg_replace("/'/","’",preg_replace('/"/','\"',$v))."\"";
-					break;
+						break;
 					case "descl":
 						$j[] = "\"".$k."\":\"".preg_replace("/'/","’",preg_replace("/[\r\n]/","§",htmlspecialchars($v)))."\"";
-					break;
+						break;
 				}
 			}
 			return "{".implode(',',$j)."}";
 		}
 		else
 		{
-		   $j = array();
-	  	   for ($i=0;$i<sizeof($d);$i++)
-		   {
+			$j = array();
+			for ($i=0;$i<sizeof($d);$i++)
+			{
 				$j[] = toJson($d[$i],true);
-		   }
-		   return "{multi:[".implode(',',$j)."]}";
+			}
+			return "{multi:[".implode(',',$j)."]}";
 		}
 
 	}
@@ -116,19 +116,19 @@ if (hasRight())
 	$r = getUserRight();
 	if (isset($r['SIRead']) && is_array($r['SIRead']) )
 		$ids = $r['SIRead'];
-		
+
 	if (isset($r['SIWrite']) && is_array($r['SIWrite']) )
 		$ids = $r['SIWrite'];
-		
+
 	if (isset($r['SIWrite']) && is_array($r['SIWrite']) && isset($r['SIRead']) && is_array($r['SIRead']))
 		$ids = array_merge($r['SIRead'],$r['SIWrite']);
-		
+
 	if (isset($ids) && is_array($ids))
 	{
 		$whereSite = "(site_public > 0 or topo_site.site_id in ('".implode("','",$ids)."'))";
 	}
-	
-	
+
+
 	if (isset($r['admin']))
 	{
 		$whereSite = "1 = 1";
@@ -136,17 +136,17 @@ if (hasRight())
 }
 
 //echo $whereSite;
-
-
+$ids ="";
+if(isset($_REQUEST["id"])){
 if (is_array($_REQUEST["id"]))
 	$ids = implode(",",$_REQUEST["id"]);
 else
 	$ids = $_REQUEST["id"];
+}
 
 
 if (isset($_REQUEST["type"]))
 {
-	
 	switch($_REQUEST["type"])
 	{
 		case "w":
@@ -164,7 +164,7 @@ if (isset($_REQUEST["type"]))
 		ORDER BY topo_voie.depart_id,voie_ordre,voie_cotation_indice";
 			echo  toJson($Bdd->fetch_all_array($q));
 			exit;
-		break;
+			break;
 		case "sp":
 			if ($ids == "") {die("{}");}
 			$q = "select `topo_depart`.`depart_id` as id, `topo_depart`.`secteur_id` as sc
@@ -211,10 +211,10 @@ if (isset($_REQUEST["type"]))
 				else
 				{
 					echo "{}";
-				}				
+				}
 			}
 			exit;
-		break;
+			break;
 		case "sc":
 			if ($ids == "") {die("{}");}
 			$q = "select `topo_secteur`.`secteur_id` as id
@@ -267,10 +267,10 @@ if (isset($_REQUEST["type"]))
 				}
 			}
 			exit;
-		break;
+			break;
 		case "si":
 			if ($ids == "") {die("{}");}
-			
+
 			$q = "select `topo_site`.`site_id` as id
 			,`topo_site`.`site_nom` as name
 			,GROUP_CONCAT(DISTINCT topo_secteur.secteur_id ORDER BY secteur_ordre  SEPARATOR ',') as array_sc
@@ -290,15 +290,15 @@ if (isset($_REQUEST["type"]))
 			and ".$whereSite."
 			group by id";
 
-			
+
 			$r = toJson($Bdd->fetch_all_array($q));
 			if ($r)
 				echo $r;
 			else
 			{
-			
-			
-							$q = "select `topo_site`.`site_id` as id
+
+
+				$q = "select `topo_site`.`site_id` as id
 							,`topo_site`.`site_nom` as name
 							,'' as array_sc
 							,topo_site.site_id as array_pi
@@ -313,10 +313,10 @@ if (isset($_REQUEST["type"]))
 							from topo_site
 							where topo_site.site_id in (".$ids.") and ".$whereSite;
 
-							echo toJson($Bdd->fetch_all_array($q));
+				echo toJson($Bdd->fetch_all_array($q));
 			}
 			exit;
-		break;
+			break;
 		case "pi":
 			if ($ids == "") {die("{}");}
 			$q = "select topo_pi.pi_id as id
@@ -332,7 +332,7 @@ if (isset($_REQUEST["type"]))
 			and topo_pi.pi_id = topo_pi_site.pi_id
 			group by topo_pi.pi_id";
 
-			
+
 			$r = toJson($Bdd->fetch_all_array($q));
 			if ($r)
 				echo $r;
@@ -341,25 +341,25 @@ if (isset($_REQUEST["type"]))
 				echo "{}";
 			}
 			exit;
-		break;		
+			break;
 		case "right":
-				$r = "{}";
-				$d = getUserRight();
-				if (!empty($d))
+			$r = "{}";
+			$d = getUserRight();
+			if (!empty($d))
+			{
+				if (is_array($d))
 				{
-						if (is_array($d))
-						{
-						   $j = array();
-						   while (list($k,$v) = each($d))
-						   {
-							    if (is_array($v))
-									$j[] = $k.":['".implode("','",$v)."']";
-						   }
-						   $r = "{".implode(',',$j)."}";
-					   }
+					$j = array();
+					foreach ($d as $k=>$v)
+					{
+						if (is_array($v))
+							$j[] = $k.":['".implode("','",$v)."']";
+					}
+					$r = "{".implode(',',$j)."}";
 				}
-				echo $r;
-		break;
+			}
+			echo $r;
+			break;
 		case "listsi":
 			$q = "select site_id,site_nom,site_public from topo_site where site_nom like '".$search."%' and ".$whereSite." order by site_nom";
 			$a = $GLOBALS["Bdd"]->fetch_all_array($q);
@@ -371,12 +371,12 @@ if (isset($_REQUEST["type"]))
 				{
 					$icon = "glyphicon-lock";
 				}
-			
+
 				$html .= "<a class=\"btn btn-list btn-default glyphicon ".$icon."\" onclick=\"".$_REQUEST["calljs"]."('".$a[$i]['site_id']."')\"> ".$a[$i]['site_nom']."</a>";
 			}
 			echo "{html:'".preg_replace("/'/","\\'",$html)."'}";
-			
-		break;
+
+			break;
 		case "listsc":
 			$q = "select secteur_id,secteur_nom from topo_secteur where site_id = '".$_REQUEST['id']."' and ".$whereSite;
 			$a = $GLOBALS["Bdd"]->fetch_all_array($q);
@@ -386,8 +386,8 @@ if (isset($_REQUEST["type"]))
 				$html .= "<a class=\"btn btn-list btn-default glyphicon glyphicon-th-list\" onclick=\"".$_REQUEST["calljs"]."('".$a[$i]['secteur_id']."')\"> ".$a[$i]['secteur_nom']."</a>";
 			}
 			echo "{html:'".preg_replace("/'/","\\'",$html)."'}";
-			
-		break;
+
+			break;
 		case "listsp":
 			$q = "select depart_id,depart_description_courte from topo_depart where secteur_id = '".$_REQUEST['id']."'";
 			$a = $GLOBALS["Bdd"]->fetch_all_array($q);
@@ -397,8 +397,8 @@ if (isset($_REQUEST["type"]))
 				$html .= "<a class=\"btn btn-list btn-default glyphicon glyphicon-th-list\" onclick=\"".$_REQUEST["calljs"]."('".$a[$i]['depart_id']."')\"> ".$a[$i]['depart_description_courte']."</a>";
 			}
 			echo "{html:'".preg_replace("/'/","\\'",$html)."'}";
-			
-		break;
+
+			break;
 		case "listw":
 			$q = "select voie_id,voie_nom from topo_voie where depart_id = '".$_REQUEST['id']."'";
 			$a = $GLOBALS["Bdd"]->fetch_all_array($q);
@@ -408,15 +408,15 @@ if (isset($_REQUEST["type"]))
 				$html .= "<a class=\"btn btn-list btn-default glyphicon glyphicon-th-list\" onclick=\"".$_REQUEST["calljs"]."('".$a[$i]['voie_id']."')\"> ".$a[$i]['voie_nom']."</a>";
 			}
 			echo "{html:'".preg_replace("/'/","\\'",$html)."'}";
-			
-		break;
+
+			break;
 		case "mesvoies":
 			if ($ids == "") {die("{}");}
 			$j = toJson(getMesVoiesBySite($ids));
 			if ($j == "") {die("{}");}
 			echo $j;
-			
-		break;
+
+			break;
 
 	}
 }

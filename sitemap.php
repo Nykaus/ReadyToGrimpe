@@ -11,8 +11,8 @@ include("rpc/rtg_getxml.php");
 $xml = ob_get_contents();
 ob_end_clean();
 ob_start();
-$xml = @ereg_replace("</RTG>","<SITEBASE>".$sitebase."</SITEBASE></RTG>",$xml);
+$xml = @preg_replace("#</RTG>#","<SITEBASE>".$sitebase."</SITEBASE></RTG>",$xml);
 $xsl = implode("",file("xsl/sitemap.xsl.xml"));
 ob_end_clean();
-echo @ereg_replace('<urlset>','<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',trim(rtg_xslt($xml,$xsl)));
+echo @preg_replace('#<urlset>#','<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',trim(rtg_xslt($xml,$xsl)));
 ?>

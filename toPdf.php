@@ -8,9 +8,9 @@ include_once(dirname(__FILE__)."/inc/PiwikTracker.php");
 $piwikTracker = new PiwikTracker(1);
 
 $sitebase = "http://".$_SERVER["HTTP_HOST"].$config["BaseUrl"];
-$_SERVER["REQUEST_URI"] = ereg_replace("\?.*","",$_SERVER["REQUEST_URI"]);
+$_SERVER["REQUEST_URI"] = preg_replace("#\?.*#","",$_SERVER["REQUEST_URI"]);
 if (substr_count($_SERVER["REQUEST_URI"],"/") > 1)
-	$_REQUEST["id"] = ereg_replace("/",",",substr($_SERVER["REQUEST_URI"],5));
+	$_REQUEST["id"] = preg_replace("#/#",",",substr($_SERVER["REQUEST_URI"],5));
 
 $param = explode(",",$_REQUEST["id"].",,,,,");
 

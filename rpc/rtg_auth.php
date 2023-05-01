@@ -20,7 +20,7 @@ if (isset($_REQUEST["action"]))
 				echo '<div class="alert alert-success" role="alert">Action éffectuée</div>';
 				exit;
 			}
-		break;
+			break;
 		case "AUTH":
 			if (isValidAuthLink($_GET))
 			{
@@ -31,8 +31,8 @@ if (isset($_REQUEST["action"]))
 			{
 				$r[] = "r:'false'";
 				$piwikTracker->doTrackEvent('Authentification','Login','error');
-			}			
-		break;
+			}
+			break;
 		case "SENDLINK":
 			if (sendAuthLink($_REQUEST["email"]))
 			{
@@ -44,17 +44,17 @@ if (isset($_REQUEST["action"]))
 				$r[] = "r:'false'";
 				$piwikTracker->doTrackEvent('Authentification','Envoie email','error');
 			}
-		break;	
-		
+			break;
+
 		case "GENLINK":
 			$r[] = "r:'".getAuthLink($_REQUEST["email"])."'";
-		break;			
+			break;
 		case "LOGOUT":
 			unAuth();
 			delAuthCookie();
 			$r[] = "r:'true'";
 			$piwikTracker->doTrackEvent('Authentification','Logout','success');
-		break;		
+			break;
 		case "ADDRIGHT":
 			if (isValidAuthLink($_GET))
 			{
@@ -69,27 +69,25 @@ if (isset($_REQUEST["action"]))
 			{
 				$r[] = "r:'false'";
 				$piwikTracker->doTrackEvent('Authentification','Ajout de droits','error');
-			}		
-		break;			
+			}
+			break;
 		case "DELRIGHT":
 			delUserRight($_REQUEST["right"],$_REQUEST["ids"]);
 			$piwikTracker->doTrackEvent('Authentification','Suppression de droits','success');
 			$r[] = "r:'true'";
-		break;	
+			break;
 		case "GENRIGHT":
 			$a = getAddRightLink($_REQUEST["right"],$_REQUEST["ids"]);
 			$r[] = "r:'".getAuthLink($a)."'";
-		break;
-		
-		
+			break;
+
+
 		case "LISTUSER":
 			if (isAuthUser())
 			{
-				$r[] = "html:'".@ereg_replace("'","\\'",getListUsers(@$_REQUEST["search"],@$_REQUEST["calljs"]))."'";
-			}			
-		break;
-		
-		
+				$r[] = "html:'".@preg_replace("#'#","\\'",getListUsers(@$_REQUEST["search"],@$_REQUEST["calljs"]))."'";
+			}
+			break;
 	}
 }
 if (isAuthUser())

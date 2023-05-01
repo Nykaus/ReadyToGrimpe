@@ -2,7 +2,7 @@
 include_once(dirname(__FILE__)."/config.inc");
 $Bdd = new Bdd($config["Bdd"]["server"],$config["Bdd"]["user"],$config["Bdd"]["password"],$config["Bdd"]["bddname"]);
 class Bdd {
- 
+
     private $host;
     private $user;
     private $pass;
@@ -11,77 +11,82 @@ class Bdd {
     private $error;
     private $errno;
     private $query;
- 
+
     function __construct($host, $user, $pass, $name = "", $conn = 1) {
-        $this -> host = $host;
-        $this -> user = $user;
-        $this -> pass = $pass;
-        if (!empty($name)) $this -> name = $name;      
-        if ($conn == 1) $this -> connect();
+        $this->host = $host;
+        $this->user = $user;
+        $this->pass = $pass;
+
+        if (!empty($name)) $this->name = $name;
+        if ($conn == 1) $this->connect();
     }
- 
+
     function __destruct() {
-        @mysql_close($this->link);
+        @mysqli_close($this->link);
     }
- 
+
     public function connect() {
-        if ($this -> link = mysql_connect($this->host, $this->user, $this->pass)) 
-	{
+        if ($this->link = @mysqli_connect($this->host, $this->user, $this->pass))
+        {
 
-		mysql_query("SET NAMES 'utf8'", $this -> link);
-		mysql_query("SET CHARACTER SET utf8", $this -> link);
-		mysql_query("SET CHARACTER_SET_CONNECTION=utf8", $this -> link);
-
-            if (!empty($this -> name)) {
-                if (!mysql_select_db($this -> name)) $this -> exception("Could not connect to the database!");
+            @mysqli_query($this->link,"SET NAMES 'utf8'");
+            @mysqli_query($this->link,"SET CHARACTER SET utf8");
+            @mysqli_query($this->link,"SET CHARACTER_SET_CONNECTION=utf8");
+            if (!empty($this->name)) {
+                if (!mysqli_select_db($this->link,$this->name)) $this->exception("Could not connect to the database!");
             }
         } else {
-            $this -> exception("Could not create database connection!");
+            $this->exception("Could not create database connection!");
         }
     }
- 
+
     public function close() {
-        @mysql_close($this->link);
+        @mysqli_close($this->link);
     }
- 
+
     public function query($sql) {
-        if ($this->query = @mysql_query($sql)) {
+//        if(strpos($sql,"topo_secteur")!==false ){
+//           // var_dump($GLOBALS["Bdd"]);exit();
+//            var_dump($sql);exit();
+//        }
+        if ($this->query = @mysqli_query($this->link,$sql)) {
             return $this->query;
         } else {
+
             $this->exception("Could not query database!");
             return false;
         }
     }
- 
+
     public function num_rows($qid) {
-        if (empty($qid)) {         
+        if (empty($qid)) {
             $this->exception("Could not get number of rows because no query id was supplied!");
             return false;
         } else {
-            return mysql_num_rows($qid);
+            return mysqli_num_rows($qid);
         }
     }
- 
+
     public function fetch_array($qid) {
         if (empty($qid)) {
             $this->exception("Could not fetch array because no query id was supplied!");
             return false;
         } else {
-            $data = mysql_fetch_array($qid);
+            $data = mysqli_fetch_array($qid);
         }
         return $data;
     }
- 
+
     public function fetch_array_assoc($qid) {
         if (empty($qid)) {
             $this->exception("Could not fetch array assoc because no query id was supplied!");
             return false;
         } else {
-            $data = mysql_fetch_array($qid, MYSQL_ASSOC);
+            $data = mysqli_fetch_array($qid, MYSQLI_ASSOC);
         }
         return $data;
     }
- 
+
     public function fetch_all_array($sql, $assoc = true) {
         $data = array();
         if ($qid = $this->query($sql)) {
@@ -99,26 +104,26 @@ class Bdd {
         }
         return $data;
     }
- 
+
     public function last_id() {
-        if ($id = mysql_insert_id()) {
+        if ($id = mysqli_insert_id($this->link)) {
             return $id;
         } else {
             return false;
         }
     }
- 
+
     private function exception($message) {
         if ($this->link) {
-            $this->error = mysql_error($this->link);
-            $this->errno = mysql_errno($this->link);
+            $this->error = mysqli_error($this->link);
+            $this->errno = mysqli_errno($this->link);
         } else {
-            $this->error = mysql_error();
-            $this->errno = mysql_errno();
+           var_dump("manque le link", $this->link);exit();
         }
+
         if (PHP_SAPI !== 'cli') {
-        ?>
- 
+            ?>
+
             <div class="alert-bad">
                 <div>
                     Database Error
@@ -140,11 +145,11 @@ class Bdd {
                     </div>
                 <?php endif; ?>
             </div>
-        <?php
+            <?php
         } else {
-                    echo "MYSQL ERROR: " . ((isset($this->error) && !empty($this->error)) ? $this->error:'') . "\n";
+            echo "MYSQL ERROR: " . ((isset($this->error) && !empty($this->error)) ? $this->error:'') . "\n";
         };
     }
- 
+
 }
 ?>

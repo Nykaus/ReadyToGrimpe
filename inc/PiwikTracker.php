@@ -445,7 +445,7 @@ class PiwikTracker
     {
         $dl = strlen($domain) - 1;
         // remove trailing '.'
-        if ($domain{$dl} === '.') {
+        if ($domain[$dl] === '.') {
             $domain = substr($domain, 0, $dl);
         }
         // remove leading '*'
@@ -1242,14 +1242,14 @@ class PiwikTracker
     {
         $this->plugins =
             '&fla=' . (int)$flash .
-                '&java=' . (int)$java .
-                '&dir=' . (int)$director .
-                '&qt=' . (int)$quickTime .
-                '&realp=' . (int)$realPlayer .
-                '&pdf=' . (int)$pdf .
-                '&wma=' . (int)$windowsMedia .
-                '&gears=' . (int)$gears .
-                '&ag=' . (int)$silverlight;
+            '&java=' . (int)$java .
+            '&dir=' . (int)$director .
+            '&qt=' . (int)$quickTime .
+            '&realp=' . (int)$realPlayer .
+            '&pdf=' . (int)$pdf .
+            '&wma=' . (int)$windowsMedia .
+            '&gears=' . (int)$gears .
+            '&ag=' . (int)$silverlight;
     }
 
     /**

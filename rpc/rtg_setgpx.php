@@ -10,7 +10,7 @@ if (isset($_POST['gpx']) && isset($_POST['id']))
 	$gpxPath = dirname(__FILE__)."/../gpx/".$fileName;
 	
 
-	$gpx = base64_decode(ereg_replace("^data:application/octet-stream;base64,","",$_POST['gpx']));
+	$gpx = base64_decode(preg_replace("#^data:application/octet-stream;base64,#","",$_POST['gpx']));
 	$fp = fopen($gpxPath, 'w');
 	fwrite($fp, $gpx);
 	fclose($fp);

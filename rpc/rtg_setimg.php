@@ -12,7 +12,7 @@ if (isset($_POST['img']))
 	$fileName = $_POST['type']."/".$h.$_POST['id'].".jpg";
 	$imgPath = dirname(__FILE__)."/../bddimg/".$fileName;
 	
-	$img = base64_decode(ereg_replace("^data:image/[^;]*;base64,","",$_POST['img']));
+	$img = base64_decode(preg_replace("#^data:image/[^;]*;base64,#","",$_POST['img']));
 	
 	$fp = fopen($imgPath, 'w');
 	fwrite($fp, $img);

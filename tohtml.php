@@ -8,8 +8,9 @@ include_once("inc/PiwikTracker.php");
 $piwikTracker = new PiwikTracker(1);
 
 $sitebase = "http://".$_SERVER["HTTP_HOST"].$config["BaseUrl"];
+
 if (substr_count($_SERVER["REQUEST_URI"],"/") > 1)
-	$_REQUEST["id"] = ereg_replace("/",",",substr($_SERVER["REQUEST_URI"],7));
+	$_REQUEST["id"] = preg_replace("#/#",",",substr($_SERVER["REQUEST_URI"],7));
 
 
 // reconstruction et filtrage 
@@ -72,7 +73,7 @@ if (hasRight())
 	
 	if (isset($r['SIPdf']) && is_array($r['SIPdf']) )
 	{
-		while(list($k,$v) = each($r['SIPdf']))
+		foreach($r['SIPdf'] as $k=>$v)
 		{
 			if (file_exists($path."/pdf/".$v.".pdf"))
 				$pdfs[$v] = "/pdf/".$v;
@@ -182,7 +183,7 @@ ob_end_clean();
 
 
 ob_start();
-$xml = @ereg_replace("</RTG>","<SITEBASE>".$sitebase."</SITEBASE><MODE>".$modeHtmlView."</MODE></RTG>",$xml);
+$xml = @preg_replace("#</RTG>#","<SITEBASE>".$sitebase."</SITEBASE><MODE>".$modeHtmlView."</MODE></RTG>",$xml);
 
 $xsl = implode("",file("xsl/tohtml.xsl.xml"));
 ob_end_clean();

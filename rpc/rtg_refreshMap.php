@@ -1,5 +1,6 @@
 <?php 
 header('Content-Type: application/json;  charset=UTF-8');
+header('Access-Control-Allow-Origin: *');
 $json = array();
 include_once("../inc/auth.inc");
 include_once("../inc/bdd.inc");
@@ -65,8 +66,12 @@ if (hasRight())
         	,avg(site_lon) as lon 
         	,round(site_lat*".$ratiolat.") as latr 
         	,round(site_lon*".$ratiolon.") as lonr 
+        	,MIN(site_hauteur_min) as minc 
+        	,MAX(site_hauteur_max) as maxc 
+        	,AVG(site_hauteur_max) as avgc 
         	,GROUP_CONCAT(DISTINCT site_id SEPARATOR ',') as grpsi 
         	,count(*) as C 
+        	,'".$_REQUEST["zoomLevel"]."' as zoomLevel 
         	from topo_site 
         	where site_lat > ".$_REQUEST["swLat"]."
 			and site_lat < ".$_REQUEST["neLat"]."
@@ -81,10 +86,15 @@ if (hasRight())
 	
 	if (!isset($_REQUEST["printmode"]))
 	{
-		if (!empty($group_sites))
-		{
-			for($i=0;$i<count($group_sites);$i++)
-			{
+        if (!empty($group_sites))
+        {
+           // var_dump($group_sites);exit();
+            /*
+             lat,lon,latr,lonr,grpsi,  C
+             lat,lon,latr,lonr,grpsi,  minc,avgc,maxc,zoomLevel
+           */
+            for($i=0;$i<count($group_sites);$i++)
+            {
 				$site_id = array_merge ( $site_id,explode(",",$group_sites[$i]['grpsi']));
 				$json[] = "[\"si-Multi\",\"".$group_sites[$i]["grpsi"]."\",[".$group_sites[$i]["lat"].",".$group_sites[$i]["lon"]."],\"".$group_sites[$i]["minc"]."\",\"".$group_sites[$i]["avgc"]."\",\"".$group_sites[$i]["maxc"]."\",\"".$group_sites[$i]["C"]."\",\"".$group_sites[$i]["latr"]."\",\"".$group_sites[$i]["lonr"]."\",\"".$_REQUEST["zoomLevel"]."\"]";
 			}
@@ -222,13 +232,13 @@ function getGpx($comp)
 		}
 	}	
 	
-	
-	
+
 	
 	$notId = "";
 	if (sizeof($site_id) > 0)
 		$notId = " site_id not in (".implode(",", $site_id).") and ";
 	// les sites sans voies
+
 	$q = "select topo_site.site_id as id, site_lat lat, site_lon lon, '-' minc, '-' maxc, '-' avgc, site_type, site_complements
 	from topo_site
 	where site_lat > ".$_REQUEST["swLat"]."
@@ -238,9 +248,8 @@ function getGpx($comp)
 	and site_lat != 0
 	and site_lon != 0
 	and ".$notId.$whereSite;
-	
-	$sites = $Bdd->fetch_all_array($q);
 
+	$sites = $Bdd->fetch_all_array($q);
 	$site_id = array();
 	if (!empty($sites))
 	{
@@ -260,11 +269,5 @@ function getGpx($comp)
 	//echo $q;
 
 
-      
-
-
-
-
 echo "[".implode(",",$json)."]";
-?>
 

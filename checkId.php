@@ -7,22 +7,19 @@ $templates['/@gmail.com$/i']  = "Google";
 $templates['/@twitter.com$/i']  = "Twitter";
 $templates['/@(live|msn|hotmail|outlook).com$/i']  = "windowslive";
 
-
-
-
 if (isset($_REQUEST['userId']))
-{		
-        $goto = $config["BaseDNSHttp"];
+{
+	$goto = $config["BaseDNSHttp"];
 	if (isset($_REQUEST['location']))
 		$goto = $_REQUEST['location'];
 
-		while (list($template,$action) = each($templates))
+	foreach ($templates as $template=>$action )
+	{
+		if (preg_match($template,$_REQUEST['userId']))
 		{
-			if (preg_match($template,$_REQUEST['userId']))
-			{
-				die("{type:\"redirect\", redirect:\"". "social_login.php?action=".$action."&goto=".urldecode($goto) ."\"}");
-			}
+			die("{type:\"redirect\", redirect:\"". "social_login.php?action=".$action."&goto=".urldecode($goto) ."\"}");
 		}
+	}
 }
 die("{type:\"local\"}");
-?>
+

@@ -20,7 +20,7 @@ if (hasRight())
 	{
 		$whereSite = "(topo_site.site_id in ('".implode("','",$right['SIWrite'])."'))";
 	}
-	
+
 	if (isset($right['admin']))
 	{
 		$whereSite = "1 = 1";
@@ -46,7 +46,7 @@ if (isset($_REQUEST["action"]))
 			}
 			addUser($_REQUEST["email"]);
 			$msg = "Utilisateur ajouté";
-		break;			
+			break;
 		case "DELUSER":
 			if (!isset($right['admin']))
 			{
@@ -54,18 +54,18 @@ if (isset($_REQUEST["action"]))
 			}
 			delUser($_REQUEST["email"]);
 			$msg = "Utilisateur supprimé";
-		break;	
+			break;
 		case "GENLINK":
-			 $msg = "Copier un des liens l'authentifications pour cet utilisateur :  <li><a href=\"".getAuthLink($_REQUEST["email"],365*3600*24)."\">Valable 1 an</a></li><li><a href=\"".getAuthLink($_REQUEST["email"],31*3600*24)."\">Valable 1 mois</a></li>";
-		break;			
+			$msg = "Copier un des liens l'authentifications pour cet utilisateur :  <li><a href=\"".getAuthLink($_REQUEST["email"],365*3600*24)."\">Valable 1 an</a></li><li><a href=\"".getAuthLink($_REQUEST["email"],31*3600*24)."\">Valable 1 mois</a></li>";
+			break;
 		case "ADDRIGHT":
 			addUserRightByEmail($_REQUEST["email"],$_REQUEST["right"],$_REQUEST["ids"]);
 			$msg = "Droit ajouté";
-		break;			
+			break;
 		case "DELRIGHT":
 			delUserRightByEmail($_REQUEST["email"],$_REQUEST["right"],$_REQUEST["ids"]);
 			$msg = "Droit supprimé";
-		break;	
+			break;
 	}
 }
 
@@ -103,29 +103,29 @@ function getSiteName($id)
 
 ?>
 <script type="text/javascript">
-function genLink(action)
-{
+	function genLink(action)
+	{
 		var r = rtg_getHtml('form_u.php?email=<?=$_REQUEST["email"]?>&action=GENLINK');
 		$('#userDetail').html(r);
 		return false;
-}	
-function delRight(right,ids)
-{
+	}
+	function delRight(right,ids)
+	{
 		var r = rtg_getHtml('form_u.php?email=<?=$_REQUEST["email"]?>&action=DELRIGHT&right='+right+'&ids='+ids);
 		$('#userDetail').html(r);
 		return false;
-}
-function addRight()
-{
+	}
+	function addRight()
+	{
 		right = $( "#right option:selected").val();
 		ids   = $( "#ids option:selected").val();
 		var r = rtg_getHtml('form_u.php?email=<?=$_REQUEST["email"]?>&action=ADDRIGHT&right='+right+'&ids='+ids);
 		$('#userDetail').html(r);
 		return false;
-}
+	}
 
-function delUser()
-{
+	function delUser()
+	{
 		if (window.confirm("Etes vous sur de supprimer cet utilisateur ?"))
 		{
 			right = $( "#right option:selected").val();
@@ -134,67 +134,67 @@ function delUser()
 			$('#userDetail').html(r);
 		}
 		return false;
-}
+	}
 
 
 </script>
 
 <?php if (isset($msg)) { ?>
-<div class="alert alert-success" role="alert">
-  <?=$msg?>
-</div>
+	<div class="alert alert-success" role="alert">
+		<?=$msg?>
+	</div>
 <?php } ?>
 
 <form class="form-horizontal" id="searchForm" role="form">
-	
- <div class="form-group">
-    <label class="col-sm-3" class="sr-only" >Nom</label>
-    <div class="col-sm-9">
-    	<?=$_REQUEST["email"]?>
-    </div>
- </div>	
- <div class="form-group">
-    <label class="col-sm-3" class="sr-only" >Dernière connexion</label>
-    <div class="col-sm-9">
-    	<?=$User["utilisateur_derniere_connexion"]?>
-    </div>
- </div>	 
- <div class="form-group">
-    <label class="col-sm-3" class="sr-only" for="site_nom">Action</label>
-    <div class="col-sm-9">
-		<a class="btn btn-default glyphicon glyphicon-link" onclick="return genLink();" aria-hidden="true"> Générer un lien d'authentification</a>
-		<?php if (isset($right['admin'])) { ?>
-			<a class="btn btn-default glyphicon glyphicon-trash" onclick="return delUser();" aria-hidden="true"> Suppression de l'utilisateur</a>
-		<?php } ?>
-    </div>
- </div>	
- <div class="form-group">
-    <label class="col-sm-3" class="sr-only" for="site_nom">Droits</label>
-    <div class="col-sm-9">
-		<?php
+
+	<div class="form-group">
+		<label class="col-sm-3" class="sr-only" >Nom</label>
+		<div class="col-sm-9">
+			<?=$_REQUEST["email"]?>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3" class="sr-only" >Dernière connexion</label>
+		<div class="col-sm-9">
+			<?=$User["utilisateur_derniere_connexion"]?>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3" class="sr-only" for="site_nom">Action</label>
+		<div class="col-sm-9">
+			<a class="btn btn-default glyphicon glyphicon-link" onclick="return genLink();" aria-hidden="true"> Générer un lien d'authentification</a>
+			<?php if (isset($right['admin'])) { ?>
+				<a class="btn btn-default glyphicon glyphicon-trash" onclick="return delUser();" aria-hidden="true"> Suppression de l'utilisateur</a>
+			<?php } ?>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3" class="sr-only" for="site_nom">Droits</label>
+		<div class="col-sm-9">
+			<?php
 
 			$d = getUserRightByEmail($_REQUEST["email"]);
 			$c=0;
 			if (is_array($d))
 			{
-				while (list($droit,$portees) = each($d))
+				foreach ($d as $droit=>$portees)
 				{
 					// on test si sur cette porté, j'ai des droits
 					$allow = false;
 					reset($portees);
-					while (list($x,$portee) = each($portees))
+					foreach ($portees as $x=>$portee)
 					{
 						if (in_array($portee,$right['SIWrite']) || isAdmin())
 							$allow = true;
 					}
-					
+
 					if ($allow && isset($mapright[$droit]))
 					{
 						$c++;
 						echo '<div class="row row'.($c%2).'"><div class="col-sm-5">'.$mapright[$droit].'</div>';
 						echo '<div class="col-sm-7">';
 						reset($portees);
-						while (list($x,$portee) = each($portees))
+						foreach ($portees as $x=>$portee)
 						{
 							//print_r($right['SIWrite']);
 							//echo "#".array_search($portee,$right['SIWrite']);
@@ -205,12 +205,12 @@ function delUser()
 									default:
 									case "admin":
 										echo '<div class="col-sm-9">-</div>';
-									break;
+										break;
 									case "SIWrite":
 									case "SIRead":
 									case "SIPdf":
 										echo '<div class="col-sm-9">'.getSiteName($portee).'</div>';
-									break;
+										break;
 								}
 								echo '<div class="col-sm-3"><a class="btn btn-default glyphicon glyphicon-trash btn-danger" onclick="return delRight(\''.$droit.'\',\''.$portee.'\');" aria-hidden="true"></a></div>';
 							}
@@ -221,28 +221,28 @@ function delUser()
 			}
 			$c++;
 			echo '<div class="row row'.($c%2).'">';
-				echo '<div class="col-sm-5"><select name="right" id="right" class="form-control">';
-					while (list($k,$v) = each($mapright))
-					{
-						echo "<option value='".$k."'>".$v."</option>";
-					}
-				echo '</select></div>';
-				echo '<div class="col-sm-7">';
-				echo '<div class="col-sm-9"><select name="ids" id="ids" class="form-control">';
-					while (list($k,$v) = each($sites))
-					{
-						echo "<option value='".$k."'>".$v."</option>";
-					}				
-				echo '</select></div>';
-				echo '<div class="col-sm-2"><a class="btn btn-default glyphicon glyphicon-plus btn-primary" onclick="return addRight();" aria-hidden="true"></a></div>';
+			echo '<div class="col-sm-5"><select name="right" id="right" class="form-control">';
+			foreach ($mapright as $k=>$v)
+			{
+				echo "<option value='".$k."'>".$v."</option>";
+			}
+			echo '</select></div>';
+			echo '<div class="col-sm-7">';
+			echo '<div class="col-sm-9"><select name="ids" id="ids" class="form-control">';
+			foreach ($sites as  list($k,$v))
+			{
+				echo "<option value='".$k."'>".$v."</option>";
+			}
+			echo '</select></div>';
+			echo '<div class="col-sm-2"><a class="btn btn-default glyphicon glyphicon-plus btn-primary" onclick="return addRight();" aria-hidden="true"></a></div>';
 			echo '</div></div>';
-			
-			
-		?>
-    </div>
- </div>		
-	
-	
+
+
+			?>
+		</div>
+	</div>
+
+
 </form>
 
 

@@ -20,14 +20,14 @@ function &backup_tables($host, $user, $pass, $name, $tables = '*'){
           "\n  DATABASE: {$name}".
           "\n  TABLES: {$tables}".
           "\n  ---------------------------------------------------------------*/\n";
-  $link = mysql_connect($host,$user,$pass);
-  mysql_select_db($name,$link);
-  mysql_query( "SET NAMES `utf8` COLLATE `utf8_general_ci`" , $link ); // Unicode
+  $link = mysqli_connect($host,$user,$pass);
+  mysqli_select_db($name,$link);
+  mysqli_query( "SET NAMES `utf8` COLLATE `utf8_general_ci`" , $link ); // Unicode
 
   if($tables == '*'){ //get all of the tables
     $tables = array();
-    $result = mysql_query("SHOW TABLES");
-    while($row = mysql_fetch_row($result)){
+    $result = mysqli_query("SHOW TABLES");
+    while($row = mysqli_fetch_row($result)){
       $tables[] = $row[0];
     }
   }else{
@@ -39,20 +39,20 @@ function &backup_tables($host, $user, $pass, $name, $tables = '*'){
             "\n  TABLE: `{$table}`".
             "\n  ---------------------------------------------------------------*/\n";           
     $data.= "DROP TABLE IF EXISTS `{$table}`;\n";
-    $res = mysql_query("SHOW CREATE TABLE `{$table}`", $link);
-    $row = mysql_fetch_row($res);
+    $res = mysqli_query("SHOW CREATE TABLE `{$table}`", $link);
+    $row = mysqli_fetch_row($res);
     $data.= $row[1].";\n";
 
-    $result = mysql_query("SELECT * FROM `{$table}`", $link);
-    $num_rows = mysql_num_rows($result);    
+    $result = mysqli_query("SELECT * FROM `{$table}`", $link);
+    $num_rows = mysqli_num_rows($result);
 
     if($num_rows>0){
       $vals = Array(); $z=0;
       for($i=0; $i<$num_rows; $i++){
-        $items = mysql_fetch_row($result);
+        $items = mysqli_fetch_row($result);
         $vals[$z]="(";
         for($j=0; $j<count($items); $j++){
-          if (isset($items[$j])) { $vals[$z].= "'".mysql_real_escape_string( $items[$j], $link )."'"; } else { $vals[$z].= "NULL"; }
+          if (isset($items[$j])) { $vals[$z].= "'".mysqli_real_escape_string( $items[$j], $link )."'"; } else { $vals[$z].= "NULL"; }
           if ($j<(count($items)-1)){ $vals[$z].= ","; }
         }
         $vals[$z].= ")"; $z++;
@@ -61,7 +61,7 @@ function &backup_tables($host, $user, $pass, $name, $tables = '*'){
       $data .= "  ".implode(";\nINSERT INTO `{$table}` VALUES ", $vals).";\n";
     }
   }
-  mysql_close( $link );
+  mysqli_close( $link );
   return $data;
 }
 
